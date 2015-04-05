@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">Lines</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_main">MainActivity</string>
+    <string name="signin_other_error">Sign in error</string>
+    <string name="title_activity_game">GameActivity</string>
+    <string name="title_activity_aa">AAActivity</string>
+    <string name="title_activity_dots">DotsActivity</string>
+
+<!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+</resources>
