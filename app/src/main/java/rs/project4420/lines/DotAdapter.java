@@ -42,22 +42,6 @@ public final class DotAdapter extends BaseAdapter{
                 mItem.add(itm);
             }
         }
-
-
-        /*        Button btn = new Button(context);
-                btn.setText("aaaaa");
-                btn.setId(R.id.button);
-                mItem.add(btn);*/
-/*
-        mItem.add(new Item("Red", R.color.red));
-        mItem.add(new Item("Blue", R.color.blue));
-        mItem.add(new Item("Purple", R.color.purple));
-        mItem.add(new Item("Light blue", R.color.light_blue));
-        mItem.add(new Item("Red", R.color.red));
-        mItem.add(new Item("Blue", R.color.blue));
-        mItem.add(new Item("Purple", R.color.purple));
-        mItem.add(new Item("Light blue", R.color.light_blue));*/
-
     }
 
     @Override
@@ -72,7 +56,6 @@ public final class DotAdapter extends BaseAdapter{
 
     @Override
     public long getItemId(int i) {
-        Log.d(TAG, ""+mItem.get(i).getId());
         return mItem.get(i).getId();
     }
 
@@ -89,9 +72,6 @@ public final class DotAdapter extends BaseAdapter{
         picture = (ImageView) v.getTag(R.id.button);
         Item button = (Item) getItem(i);
         picture.setImageResource(button.drawableId);
-        /*picture = (ImageView) v.getTag(R.id.button);
-        Item item = (Item) getItem(i);
-        picture.setImageResource(item.drawableId);*/
 
         return v;
     }
@@ -104,17 +84,7 @@ public final class DotAdapter extends BaseAdapter{
         public Item(Context context, int drawableId) {
             super(context);
             this.drawableId = drawableId;
-            setText("jsakdla");
         }
     }
-    /*
-    private static class Item{
-        public final String name;
-        public final int drawableId;
 
-        Item(String name, int drawableId) {
-            this.name = name;
-            this.drawableId = drawableId;
-        }
-    }*/
 }

@@ -1,6 +1,7 @@
 package rs.project4420.lines;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -12,9 +13,11 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,21 +40,16 @@ public class DotsActivity extends ActionBarActivity {
         table = (GridView) findViewById(R.id.table);
         List<rs.project4420.lines.DotView> list = new ArrayList<>();
 
-        for (int i = 0; i < 6; i++) {
-            for (int j = 0; j < 6; j++) {
-
-                rs.project4420.lines.DotView dv = new rs.project4420.lines.DotView(this);
-                dv.setColor(getResources().getColor(R.color.blue));
-                list.add(dv);
 
 
-                Button button = new Button(this);
-                button.setText(""+i+" "+j);
-                //table.addView(button, i+j);
-            }
-        }
         GridView gridView = (GridView)findViewById(R.id.table);
         gridView.setAdapter(new DotAdapter(this));
+        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Log.d(TAG, ""+position);
+            }
+        });
 
     }
 
@@ -65,23 +63,23 @@ public class DotsActivity extends ActionBarActivity {
 
         public DotView(Context context) {
             super(context);
-            //init(context, null, 0);
+            init(context, null, 0);
         }
 
         public DotView(Context context, AttributeSet attrs) {
             super(context, attrs);
-            //init(context, attrs, 0);
+            init(context, attrs, 0);
         }
 
         public DotView(Context context, AttributeSet attrs, int defStyleAttr) {
             super(context, attrs, defStyleAttr);
-           // init(context, attrs, defStyleAttr);
+            init(context, attrs, defStyleAttr);
         }
-        /*
+
         private void init(Context context, AttributeSet attrs, int defStyleAttr){
             mPaint = new Paint();
             mPosition = new PointF(10,10);
-        }*/
+        }
 
         @Override
         protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
