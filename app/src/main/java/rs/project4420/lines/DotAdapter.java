@@ -1,5 +1,10 @@
 package rs.project4420.lines;
 
+import android.animation.Animator;
+import android.animation.AnimatorInflater;
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
+import android.animation.ValueAnimator;
 import android.content.Context;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -42,6 +47,7 @@ public final class DotAdapter extends BaseAdapter{
                 mItem.add(itm);
             }
         }
+
     }
 
     @Override

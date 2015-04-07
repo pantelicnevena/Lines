@@ -14,6 +14,8 @@ public class DotView extends ImageView {
     private float mRadius = 20;
     private PointF mPosition;
     private Paint mPaint;
+    private int mHeight;
+    private int mWeight;
 
     private int color;
 

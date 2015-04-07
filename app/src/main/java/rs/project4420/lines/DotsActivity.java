@@ -1,5 +1,8 @@
 package rs.project4420.lines;
 
+import android.animation.AnimatorInflater;
+import android.animation.AnimatorSet;
+import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Canvas;
@@ -13,6 +16,15 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.view.animation.AnticipateOvershootInterpolator;
+import android.view.animation.BounceInterpolator;
+import android.view.animation.CycleInterpolator;
+import android.view.animation.LinearInterpolator;
+import android.view.animation.OvershootInterpolator;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.GridView;
@@ -46,8 +58,24 @@ public class DotsActivity extends ActionBarActivity {
         gridView.setAdapter(new DotAdapter(this));
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Log.d(TAG, ""+position);
+            public void onItemClick(AdapterView<?> parent, final View view, int position, long id) {
+                final ValueAnimator va =  ValueAnimator.ofFloat(0, (float)Math.PI);
+                va.setDuration(2000);
+                va.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                    @Override
+                    public void onAnimationUpdate(ValueAnimator animation) {
+                        float value = (float) animation.getAnimatedValue();
+                        //Log.d(TAG, "" + value);
+                        //ViewGroup.LayoutParams layoutParams = view.getLayoutParams();
+                        //layoutParams.width = (int) Math.abs(113.22 * Math.cos((double) value * 5));
+                        //view.setLayoutParams(layoutParams);
+                        int pad = (int) Math.abs(40* Math.sin((double) value*2));
+                        view.setPadding(pad, pad, pad, pad);
+                    }
+                });
+                va.setRepeatCount(ValueAnimator.INFINITE);
+                va.setInterpolator(new LinearInterpolator());
+                va.start();
             }
         });
 
