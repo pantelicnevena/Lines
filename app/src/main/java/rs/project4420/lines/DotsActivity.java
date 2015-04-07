@@ -44,6 +44,7 @@ public class DotsActivity extends ActionBarActivity {
     Random rnd;
     GridView table;
     View selectedView;
+    ValueAnimator valAnim;
     //HashMap<View, Boolean> items;
 
     @Override
@@ -65,14 +66,18 @@ public class DotsActivity extends ActionBarActivity {
             Log.d(TAG, items.get(i)+"");
         }*/
 
+        valAnim = ValueAnimator.ofFloat(0, (float)Math.PI);
+
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, final View view, int position, long id) {
-                final ValueAnimator va =  ValueAnimator.ofFloat(0, (float)Math.PI);
+                ValueAnimator va =  ValueAnimator.ofFloat(0, (float)Math.PI);
+                va.setDuration(2000);
+                va.setRepeatCount(ValueAnimator.INFINITE);
+                va.setInterpolator(new LinearInterpolator());
                 if (selectedView == null) {
                     selectedView = view;
 
-                    va.setDuration(2000);
                     va.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
                         @Override
                         public void onAnimationUpdate(ValueAnimator animation) {
@@ -86,21 +91,34 @@ public class DotsActivity extends ActionBarActivity {
                             view.setPadding(pad, pad, pad, pad);
                         }
                     });
-                    va.setInterpolator(new LinearInterpolator());
+
                     va.start();
+                    valAnim = va;
                     Log.d(TAG, "Startovana");
                 }
                 else {
                     if(selectedView == view){
+                        valAnim.end();
                         view.clearAnimation();
                         selectedView = null;
                         Log.d(TAG, "ISTI KLIKNUT");
                     }
                     else {
+                        valAnim.end();
                         view.clearAnimation();
                         selectedView = view;
-                        //va.start();
-                        Log.d(TAG, "DRUGI KLIKNUT");
+                        va.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                            @Override
+                            public void onAnimationUpdate(ValueAnimator animation) {
+                                float value = (float) animation.getAnimatedValue();
+                                int height = view.getHeight();
+                                int pad = (int) Math.abs(0.42 * height * Math.sin((double) value * 2));
+                                view.setPadding(pad, pad, pad, pad);
+                            }
+                        });
+                        va.start();
+                        valAnim = va;
+                        Log.d(TAG, "RAZLICITI KLIKNUT");
                     }
                 }
             }
