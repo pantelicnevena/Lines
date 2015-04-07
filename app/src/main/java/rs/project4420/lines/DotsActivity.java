@@ -32,6 +32,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 
@@ -42,9 +43,12 @@ public class DotsActivity extends ActionBarActivity {
 
     Random rnd;
     GridView table;
+    View selectedView;
+    //HashMap<View, Boolean> items;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        selectedView = null;
         super.onCreate(savedInstanceState);
         rnd = new Random();
 
@@ -52,30 +56,53 @@ public class DotsActivity extends ActionBarActivity {
         table = (GridView) findViewById(R.id.table);
         List<rs.project4420.lines.DotView> list = new ArrayList<>();
 
-
-
-        GridView gridView = (GridView)findViewById(R.id.table);
+        final GridView gridView = (GridView)findViewById(R.id.table);
         gridView.setAdapter(new DotAdapter(this));
+
+        /*items = new HashMap<>();
+        for (int i = 0; i < 35; i++) {
+            items.put((View) gridView.getItemAtPosition(i), false);
+            Log.d(TAG, items.get(i)+"");
+        }*/
+
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, final View view, int position, long id) {
                 final ValueAnimator va =  ValueAnimator.ofFloat(0, (float)Math.PI);
-                va.setDuration(2000);
-                va.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-                    @Override
-                    public void onAnimationUpdate(ValueAnimator animation) {
-                        float value = (float) animation.getAnimatedValue();
-                        //Log.d(TAG, "" + value);
-                        //ViewGroup.LayoutParams layoutParams = view.getLayoutParams();
-                        //layoutParams.width = (int) Math.abs(113.22 * Math.cos((double) value * 5));
-                        //view.setLayoutParams(layoutParams);
-                        int pad = (int) Math.abs(40* Math.sin((double) value*2));
-                        view.setPadding(pad, pad, pad, pad);
+                if (selectedView == null) {
+                    selectedView = view;
+
+                    va.setDuration(2000);
+                    va.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                        @Override
+                        public void onAnimationUpdate(ValueAnimator animation) {
+                            float value = (float) animation.getAnimatedValue();
+                            //Log.d(TAG, "" + value);
+                            //ViewGroup.LayoutParams layoutParams = view.getLayoutParams();
+                            //layoutParams.width = (int) Math.abs(113.22 * Math.cos((double) value * 5));
+                            //view.setLayoutParams(layoutParams);
+                            int height = view.getHeight();
+                            int pad = (int) Math.abs(0.42 * height * Math.sin((double) value * 2));
+                            view.setPadding(pad, pad, pad, pad);
+                        }
+                    });
+                    va.setInterpolator(new LinearInterpolator());
+                    va.start();
+                    Log.d(TAG, "Startovana");
+                }
+                else {
+                    if(selectedView == view){
+                        view.clearAnimation();
+                        selectedView = null;
+                        Log.d(TAG, "ISTI KLIKNUT");
                     }
-                });
-                va.setRepeatCount(ValueAnimator.INFINITE);
-                va.setInterpolator(new LinearInterpolator());
-                va.start();
+                    else {
+                        view.clearAnimation();
+                        selectedView = view;
+                        //va.start();
+                        Log.d(TAG, "DRUGI KLIKNUT");
+                    }
+                }
             }
         });
 
