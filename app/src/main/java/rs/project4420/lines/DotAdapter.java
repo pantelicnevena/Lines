@@ -39,6 +39,7 @@ public final class DotAdapter extends BaseAdapter{
     Button selectedItem = null;
     ValueAnimator valAnim;
     ValueAnimator va;
+    GridView gridView;
 
     public DotAdapter(Context context) {
         con = context;
@@ -60,7 +61,8 @@ public final class DotAdapter extends BaseAdapter{
 
         //Niz polja
         for (int i = 0; i < 36; i++) {
-            Item item = new Item(context, colors.get(7), colors.get(7));
+            Button item = new Button(context);
+            item.setDrawingCacheBackgroundColor(colors.get(7));
             mItem.add(item);
         }
         //Random odredjivanje pozicije obojenih polja u listi
@@ -71,7 +73,8 @@ public final class DotAdapter extends BaseAdapter{
         //Dodavanje obojenih polja na random pozicije u listu obojenih polja
         for (int i = 0; i < pozicija.size(); i++) {
             int res = colors.get(rnd.nextInt(7));
-            Item itm = new Item(context, res, res);
+            Button itm = new Button(context);
+            itm.setDrawingCacheBackgroundColor(res);
             mItem.set(pozicija.get(i), itm);
         }
 
@@ -98,7 +101,7 @@ public final class DotAdapter extends BaseAdapter{
     public View getView(int i, final View view, ViewGroup viewGroup) {
         View v = view;
         final ImageView button;
-        Item itm;
+        Button itm;
 
         if (v == null) {
             v = mInflater.inflate(R.layout.grid_item, viewGroup, false);
@@ -107,18 +110,17 @@ public final class DotAdapter extends BaseAdapter{
         }
 
         btn = (Button) v.getTag(R.id.item);
-        itm = (Item) getItem(i);
+        itm = (Button) getItem(i);
 
-        GridView gridView = (GridView) viewGroup;
+        gridView = (GridView) viewGroup;
         final int size = Integer.valueOf(gridView.getWidth()/6);
-        Log.d(TAG, "Size: "+size);
         ViewGroup.LayoutParams lp = btn.getLayoutParams();
         lp.width = size;
         lp.height = size;
         btn.setLayoutParams(lp);
 
-        btn.getBackground().setColorFilter(con.getResources().getColor(itm.drawableId), PorterDuff.Mode.MULTIPLY);
-        btn.setDrawingCacheBackgroundColor(itm.drawableId);
+        btn.getBackground().setColorFilter(con.getResources().getColor(itm.getDrawingCacheBackgroundColor()), PorterDuff.Mode.MULTIPLY);
+        btn.setDrawingCacheBackgroundColor(itm.getDrawingCacheBackgroundColor());
 
         valAnim = ValueAnimator.ofFloat(0, (float)Math.PI);
 
@@ -215,8 +217,7 @@ public final class DotAdapter extends BaseAdapter{
 
             }
         });
-        //button = (ImageView) v.getTag(R.id.button);
-        //button.setImageResource(itm.drawableId);
+
 
         return v;
     }
@@ -232,16 +233,6 @@ public final class DotAdapter extends BaseAdapter{
             super(context);
             this.drawableId = drawableId;
             this.setBackgroundColor(color);
-        }
-
-        @Override
-        public void setHeight(int pixels) {
-            super.setHeight(pixels);
-        }
-
-        @Override
-        public void setBackgroundColor(int color) {
-            super.setBackgroundColor(color);
         }
 
     }
