@@ -27,6 +27,7 @@ import android.view.animation.LinearInterpolator;
 import android.view.animation.OvershootInterpolator;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -43,9 +44,8 @@ public class DotsActivity extends ActionBarActivity {
 
     Random rnd;
     GridView table;
-    View selectedView;
+    DotAdapter.Item selectedView;
     ValueAnimator valAnim;
-    //HashMap<View, Boolean> items;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -58,75 +58,125 @@ public class DotsActivity extends ActionBarActivity {
         List<rs.project4420.lines.DotView> list = new ArrayList<>();
 
         final GridView gridView = (GridView)findViewById(R.id.table);
-        gridView.setAdapter(new DotAdapter(this));
+        final DotAdapter adapter = new DotAdapter(this);
+        gridView.setAdapter(adapter);
 
-        /*items = new HashMap<>();
-        for (int i = 0; i < 35; i++) {
-            items.put((View) gridView.getItemAtPosition(i), false);
-            Log.d(TAG, items.get(i)+"");
-        }*/
-
-        valAnim = ValueAnimator.ofFloat(0, (float)Math.PI);
-
+        /*valAnim = ValueAnimator.ofFloat(0, (float)Math.PI);
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, final View view, int position, long id) {
-                ValueAnimator va =  ValueAnimator.ofFloat(0, (float)Math.PI);
-                va.setDuration(2000);
-                va.setRepeatCount(ValueAnimator.INFINITE);
-                va.setInterpolator(new LinearInterpolator());
-                if (selectedView == null) {
-                    selectedView = view;
 
-                    va.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-                        @Override
-                        public void onAnimationUpdate(ValueAnimator animation) {
-                            float value = (float) animation.getAnimatedValue();
-                            //Log.d(TAG, "" + value);
-                            //ViewGroup.LayoutParams layoutParams = view.getLayoutParams();
-                            //layoutParams.width = (int) Math.abs(113.22 * Math.cos((double) value * 5));
-                            //view.setLayoutParams(layoutParams);
-                            int height = view.getHeight();
-                            int pad = (int) Math.abs(0.42 * height * Math.sin((double) value * 2));
-                            view.setPadding(pad, pad, pad, pad);
-                        }
-                    });
+                DotAdapter.Item item = (DotAdapter.Item) gridView.getItemAtPosition(position);
+                if(item.drawableId != 2131230754){
 
-                    va.start();
-                    valAnim = va;
-                    Log.d(TAG, "Startovana");
-                }
-                else {
-                    if(selectedView == view){
-                        valAnim.end();
-                        view.clearAnimation();
-                        selectedView = null;
-                        Log.d(TAG, "ISTI KLIKNUT");
-                    }
-                    else {
-                        valAnim.end();
-                        view.clearAnimation();
-                        selectedView = view;
+                    //Log.d(TAG, "ITEM: " + item.drawableId);
+
+                    ValueAnimator va = ValueAnimator.ofFloat(0, (float) Math.PI);
+                    va.setDuration(2000);
+                    va.setRepeatCount(ValueAnimator.INFINITE);
+                    va.setInterpolator(new LinearInterpolator());
+                    if (selectedView == null) {
+                        selectedView = item;
+
                         va.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
                             @Override
                             public void onAnimationUpdate(ValueAnimator animation) {
                                 float value = (float) animation.getAnimatedValue();
+                                //Log.d(TAG, "" + value);
+                                //ViewGroup.LayoutParams layoutParams = view.getLayoutParams();
+                                //layoutParams.width = (int) Math.abs(113.22 * Math.cos((double) value * 5));
+                                //view.setLayoutParams(layoutParams);
                                 int height = view.getHeight();
                                 int pad = (int) Math.abs(0.42 * height * Math.sin((double) value * 2));
                                 view.setPadding(pad, pad, pad, pad);
                             }
                         });
+
                         va.start();
                         valAnim = va;
-                        Log.d(TAG, "RAZLICITI KLIKNUT");
+                    } else {
+                        if (selectedView == item) {
+                            valAnim.end();
+                            view.clearAnimation();
+                            selectedView = null;
+                            //Log.d(TAG, "ISTI KLIKNUT");
+                        } else {
+                            valAnim.end();
+                            view.clearAnimation();
+                            selectedView = item;
+                            va.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                                @Override
+                                public void onAnimationUpdate(ValueAnimator animation) {
+                                    float value = (float) animation.getAnimatedValue();
+                                    int height = view.getHeight();
+                                    int pad = (int) Math.abs(0.42 * height * Math.sin((double) value * 2));
+                                    view.setPadding(pad, pad, pad, pad);
+                                }
+                            });
+                            va.start();
+                            valAnim = va;
+                            //Log.d(TAG, "RAZLICITI KLIKNUT");
+                        }
                     }
-                }
+                } *//*else {
+                    if (selectedView != null){
+                        Log.d(TAG, "Start: "+item.drawableId+", cilj: "+selectedView.drawableId);
+                        int di = item.drawableId;
+                        item.drawableId = selectedView.drawableId;
+                        selectedView.drawableId = di;
+                        Log.d(TAG, "Start: "+item.drawableId+", cilj: "+selectedView.drawableId);
+                    }
+                }*//*
             }
-        });
+        });*/
+
+        //***********************************//
+
+        int[][] polja = new int[6][6];                                  //inicijalizacija
+        boolean pronadjenCilj = false;
+        Random rnd = new Random();
+        List<Polje> zid = new ArrayList<>();
+
+        for (int i = 0; i < 36; i++) {                                  //nasumicno postavljanje zidova (kvadratica)
+            DotAdapter.Item item = (DotAdapter.Item) gridView.getItemAtPosition(i);
+            int n = i/6;
+            int m = i%6;
+            if (item.drawableId == 2131230754){
+                polja[n][m] = 0;
+            } else {
+                polja[n][m] = 1;
+                zid.add(new Polje(n,m));
+            }
+        }
+
+        /*for (int i = 0; i <6 ; i++) {                                   //pravljenje liste praznih polja
+            for (int j = 0; j <6 ; j++) {
+                if (polja[i][j] == 0) praznaPolja.add(new Polje(i,j));
+            }
+        }*/
+
+
+        for (int i = 0; i < 6; i++) {                                   //stampanje matrice
+            List lista = new ArrayList();
+            for (int j = 0; j < 6; j++) { lista.add(polja[i][j]); }
+            Log.d(TAG, ""+lista);
+        }
+
+        /*int s = rnd.nextInt(zid.size());                                //postavljanje cilja i starta
+        int c = rnd.nextInt(praznaPolja.size());
+        Polje start = zid.get(s);
+        Polje cilj = praznaPolja.get(c);
+        boolean slobodno = false;
+
+        Log.d(TAG, "Start: "+start.toString()+", cilj: "+cilj.toString());
+*/
+        int [][] kopija = polja;                                        //postaljanje kopije matrice
 
     }
 
-    public class DotView extends ImageView {
+
+
+    /*public class DotView extends ImageView {
 
         private float mRadius = 20;
         private PointF mPosition;
@@ -159,7 +209,7 @@ public class DotsActivity extends ActionBarActivity {
             super.onMeasure(widthMeasureSpec, heightMeasureSpec);
             setMeasuredDimension(getMeasuredWidth(), getMeasuredWidth()); //Snap to width
         }
-        /*
+
         @Override
         protected void onDraw(Canvas canvas) {
             super.onDraw(canvas);
@@ -168,7 +218,7 @@ public class DotsActivity extends ActionBarActivity {
             canvas.drawCircle(mPosition.x, mPosition.y, mRadius, mPaint);
             canvas.restore();
         }
-*/
+
         public int getColor() {
             return color;
         }
@@ -177,10 +227,10 @@ public class DotsActivity extends ActionBarActivity {
             this.color = color;
         }
 
-    }
+    }*/
 
 
-    public class MyView extends View {
+    /*public class MyView extends View {
         public MyView(Context context) {
             super(context);
             // TODO Auto-generated constructor stub
@@ -238,5 +288,5 @@ public class DotsActivity extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
-    }
+    }*/
 }
