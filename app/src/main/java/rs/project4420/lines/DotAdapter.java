@@ -18,6 +18,7 @@ import android.view.animation.LinearInterpolator;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -92,6 +93,7 @@ public final class DotAdapter extends BaseAdapter{
         return mItem.get(i).getId();
     }
 
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     @Override
     public View getView(int i, final View view, ViewGroup viewGroup) {
         View v = view;
@@ -107,11 +109,13 @@ public final class DotAdapter extends BaseAdapter{
         btn = (Button) v.getTag(R.id.item);
         itm = (Item) getItem(i);
 
+        GridView gridView = (GridView) viewGroup;
+        final int size = Integer.valueOf(gridView.getWidth()/6);
+        Log.d(TAG, "Size: "+size);
         ViewGroup.LayoutParams lp = btn.getLayoutParams();
-        lp.width = 109;
-        lp.height = 109;
+        lp.width = size;
+        lp.height = size;
         btn.setLayoutParams(lp);
-        final int height = btn.getLayoutParams().height;
 
         btn.getBackground().setColorFilter(con.getResources().getColor(itm.drawableId), PorterDuff.Mode.MULTIPLY);
         btn.setDrawingCacheBackgroundColor(itm.drawableId);
@@ -140,10 +144,10 @@ public final class DotAdapter extends BaseAdapter{
                             public void onAnimationUpdate(ValueAnimator animation) {
                                 float value = (float) animation.getAnimatedValue();
 
-                                int pad = (int) Math.abs(0.42 * height * Math.sin((double) value * 2)) / 2;
+                                int pad = (int) Math.abs(0.42 * size * Math.sin((double) value * 2)) / 2;
                                 ViewGroup.LayoutParams params = v.getLayoutParams();
-                                params.width = 109 - pad * 2;
-                                params.height = 109 - pad * 2;
+                                params.width = size - pad * 2;
+                                params.height = size - pad * 2;
                                 FrameLayout fl = (FrameLayout) v.getParent();
                                 fl.setPadding(pad, pad, pad, pad);
                                 v.setLayoutParams(params);
@@ -169,10 +173,10 @@ public final class DotAdapter extends BaseAdapter{
                                 @Override
                                 public void onAnimationUpdate(ValueAnimator animation) {
                                     float value = (float) animation.getAnimatedValue();
-                                    int pad = (int) Math.abs(0.42 * height * Math.sin((double) value * 2)) / 2;
+                                    int pad = (int) Math.abs(0.42 * size * Math.sin((double) value * 2)) / 2;
                                     ViewGroup.LayoutParams params = v.getLayoutParams();
-                                    params.width = 109 - pad * 2;
-                                    params.height = 109 - pad * 2;
+                                    params.width = size - pad * 2;
+                                    params.height = size - pad * 2;
                                     FrameLayout fl = (FrameLayout) v.getParent();
                                     fl.setPadding(pad, pad, pad, pad);
                                     v.setLayoutParams(params);
