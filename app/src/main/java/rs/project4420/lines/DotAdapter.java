@@ -4,11 +4,7 @@ import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
 import android.annotation.TargetApi;
 import android.content.Context;
-import android.graphics.Color;
 import android.graphics.PorterDuff;
-import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.PaintDrawable;
 import android.os.Build;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -35,15 +31,23 @@ public final class DotAdapter extends BaseAdapter{
     private final List<Button> mItem = new ArrayList<>();
     private final LayoutInflater mInflater;
     Context con;
-    Button btn;
+    //Button btn;
     Button selectedItem = null;
     ValueAnimator valAnim;
     ValueAnimator va;
     GridView gridView;
+    List<Button> listaPolja = new ArrayList<>();
+
+    int[][] matrica;
+    Matrica m;
+
+    Polje cilj;
+    Polje start;
 
     public DotAdapter(Context context) {
         con = context;
         mInflater = LayoutInflater.from(context);
+
 
         //Lista boja za random generisanje pocetnog stanja
         List<Integer> colors = new ArrayList<>();
@@ -96,20 +100,25 @@ public final class DotAdapter extends BaseAdapter{
         return mItem.get(i).getId();
     }
 
+
+    int b = 0;
+
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     @Override
     public View getView(int i, final View view, ViewGroup viewGroup) {
+
+        Log.d(TAG, "debug : " + i);
+
         View v = view;
-        final ImageView button;
         Button itm;
 
         if (v == null) {
             v = mInflater.inflate(R.layout.grid_item, viewGroup, false);
-            v.setTag(R.id.button, v.findViewById(R.id.button));
+//            v.setTag(R.id.button, v.findViewById(R.id.button));
             v.setTag(R.id.item, v.findViewById(R.id.item));
         }
 
-        btn = (Button) v.getTag(R.id.item);
+        Button btn = (Button) v.getTag(R.id.item);
         itm = (Button) getItem(i);
 
         gridView = (GridView) viewGroup;
@@ -121,8 +130,14 @@ public final class DotAdapter extends BaseAdapter{
 
         btn.getBackground().setColorFilter(con.getResources().getColor(itm.getDrawingCacheBackgroundColor()), PorterDuff.Mode.MULTIPLY);
         btn.setDrawingCacheBackgroundColor(itm.getDrawingCacheBackgroundColor());
+        listaPolja.add(btn);
 
         valAnim = ValueAnimator.ofFloat(0, (float)Math.PI);
+
+        if (i == 1){
+            m = new Matrica(gridView);
+            matrica = m.kreirajMatricu();
+        }
 
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -150,6 +165,7 @@ public final class DotAdapter extends BaseAdapter{
                                 ViewGroup.LayoutParams params = v.getLayoutParams();
                                 params.width = size - pad * 2;
                                 params.height = size - pad * 2;
+
                                 FrameLayout fl = (FrameLayout) v.getParent();
                                 fl.setPadding(pad, pad, pad, pad);
                                 v.setLayoutParams(params);
@@ -193,6 +209,8 @@ public final class DotAdapter extends BaseAdapter{
                 else{
                     //Ako je prethodno selektovano obojeno polje za pomeranje
                     if (selectedItem != null) {
+                        Button s = selectedItem;
+                        Button c = (Button) v;
                         final int color1 = selectedItem.getDrawingCacheBackgroundColor();
                         final int color2 = v.getDrawingCacheBackgroundColor();
                         ValueAnimator colorAnimator = ValueAnimator.ofObject(new ArgbEvaluator(), color1, color2);
@@ -208,33 +226,60 @@ public final class DotAdapter extends BaseAdapter{
                             }
                         });
                         colorAnimator.start();
+
+
+
+                        /*for (int j = 0; j < 36; j++) {
+                            if (listaPolja.get(j).equals(c)) {
+                                int n = j/6;
+                                int m = j%6 - 1;
+                                cilj = new Polje(n, m, (Button) v);
+                                Log.d(TAG, "CILJ");
+                            }
+                            for (int k = 0; k < 36; k++) {
+                                if (listaPolja.get(k).equals(selectedItem)) {
+                                    int n = k/6;
+                                    int m = k%6 - 1;
+                                    start = new Polje(n, m, (Button) selectedItem);
+                                    Log.d(TAG, "START");
+                                }
+                            }
+                        };
+
+                        for (int k = 0; k < 36; k++) {
+                            if (listaPolja.get(k).equals(s)){
+                                int n = k/6;
+                                int m = k%6;
+                                start = new Polje(n, m, (Button)selectedItem);
+                                Log.d(TAG, "START");
+                            }
+                            Log.d(TAG, "Start: "+start+", cilj: "+cilj);
+
+                            matrica = m.izmeniMatricu(start, cilj);
+                            for (int j = 0; j < 6; j++) {
+                                List lista = new ArrayList();
+                                for (int k = 0; k < 6; k++) {
+                                    lista.add(matrica[j][k]);
+                                }
+                                Log.d(TAG, "A: " + lista);
+                            }
+                        };*/
+
+
                     }
                     //Ako nije prethodno selektovano obojeno polje za pomeranje
                     else{
                         Toast.makeText(con, "Izaberite polje za pomeranje", Toast.LENGTH_SHORT).show();
+                        Log.d(TAG, "Izaberite polje za pomeranje");
                     }
-                }
 
+                }
+                //Log.d(TAG, "Start: " + start + ", cilj: " + cilj);
             }
         });
-
 
         return v;
     }
 
-
-
-
-    public static class Item extends Button{
-        public int drawableId;
-        public int color;
-
-        public Item(Context context, int drawableId, int color) {
-            super(context);
-            this.drawableId = drawableId;
-            this.setBackgroundColor(color);
-        }
-
-    }
 
 }

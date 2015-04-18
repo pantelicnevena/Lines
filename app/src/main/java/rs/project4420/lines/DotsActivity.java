@@ -44,56 +44,26 @@ public class DotsActivity extends ActionBarActivity {
 
     Random rnd;
     GridView table;
-    DotAdapter.Item selectedView;
 
     public DotsActivity() {
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        selectedView = null;
         super.onCreate(savedInstanceState);
-        rnd = new Random();
 
         setContentView(R.layout.activity_dots);
         table = (GridView) findViewById(R.id.table);
-        List<rs.project4420.lines.DotView> list = new ArrayList<>();
 
         GridView gridView = (GridView)findViewById(R.id.table);
-        final DotAdapter adapter = new DotAdapter(this);
+        DotAdapter adapter = new DotAdapter(this);
         gridView.setAdapter(adapter);
 
-        //*** MATRICA ***//
-
-        //Inicijalizacija
-        int[][] polja = new int[6][6];
-        boolean pronadjenCilj = false;
-        List<Polje> zid = new ArrayList<>();
-
-        //Kreiranje matrice
-        for (int j = 0; j < 36; j++) {
-            Button polje = (Button) gridView.getItemAtPosition(j);
-            int n = j/6;
-            int m = j%6;
-            if (polje.getDrawingCacheBackgroundColor() == 2131230754){
-                polja[n][m] = 0;
-            } else {
-                polja[n][m] = 1;
-                zid.add(new Polje(n, m, polje));
-            }
-        }
-
-        //Stampanje matrice
-        for (int j = 0; j < 6; j++) {
-            List lista = new ArrayList();
-            for (int k = 0; k < 6; k++) {
-                lista.add(polja[j][k]);
-            }
-            Log.d(TAG, j+": "+lista);
-        }
-
-        //Postavljanje kopije matrice
-        int [][] kopija = polja;
+/*
+        Matrica matrica = new Matrica(gridView);
+        matrica.kreirajMatricu();
+        matrica.stampajMatricu();
+*/
 
     }
 
