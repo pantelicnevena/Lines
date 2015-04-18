@@ -43,7 +43,17 @@ public class Matrica {
             for (int k = 0; k < 6; k++) {
                 lista.add(polja[j][k]);
             }
-            //Log.d(TAG, j + ": " + lista);
+            Log.d(TAG, j + ": " + lista);
+        }
+    }
+
+    public void stampajMatricu(int[][] matrica){
+        for (int j = 0; j < 6; j++) {
+            List lista = new ArrayList();
+            for (int k = 0; k < 6; k++) {
+                lista.add(matrica[j][k]);
+            }
+            Log.d(TAG, j + ": " + lista);
         }
     }
 
@@ -55,6 +65,7 @@ public class Matrica {
     public int[][] izmeniMatricu(Polje start, Polje cilj){
         polja[start.getN()][start.getM()] = 0;
         polja[cilj.getN()][cilj.getM()] = 1;
+        stampajMatricu(polja);
         napraviKopiju();
         return polja;
     }

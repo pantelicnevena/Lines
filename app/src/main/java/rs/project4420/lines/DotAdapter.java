@@ -107,14 +107,12 @@ public final class DotAdapter extends BaseAdapter{
     @Override
     public View getView(int i, final View view, ViewGroup viewGroup) {
 
-        Log.d(TAG, "debug : " + i);
-
         View v = view;
         Button itm;
 
         if (v == null) {
             v = mInflater.inflate(R.layout.grid_item, viewGroup, false);
-//            v.setTag(R.id.button, v.findViewById(R.id.button));
+            v.setTag(R.id.button, v.findViewById(R.id.button));
             v.setTag(R.id.item, v.findViewById(R.id.item));
         }
 
@@ -132,11 +130,17 @@ public final class DotAdapter extends BaseAdapter{
         btn.setDrawingCacheBackgroundColor(itm.getDrawingCacheBackgroundColor());
         listaPolja.add(btn);
 
+
         valAnim = ValueAnimator.ofFloat(0, (float)Math.PI);
 
         if (i == 1){
+            for (int j = 0; j < listaPolja.size(); j++) {
+                Log.d(TAG, ""+listaPolja.get(j));
+            }
+
             m = new Matrica(gridView);
             matrica = m.kreirajMatricu();
+            m.stampajMatricu();
         }
 
         btn.setOnClickListener(new View.OnClickListener() {
@@ -227,44 +231,22 @@ public final class DotAdapter extends BaseAdapter{
                         });
                         colorAnimator.start();
 
-
-
-                        /*for (int j = 0; j < 36; j++) {
-                            if (listaPolja.get(j).equals(c)) {
-                                int n = j/6;
-                                int m = j%6 - 1;
-                                cilj = new Polje(n, m, (Button) v);
-                                Log.d(TAG, "CILJ");
+                        //Pravljenje izmena u matrici prilikom pomeranja polja
+                        for (int m = 0; m < listaPolja.size() ; m++) {
+                            //TODO Iz nekog razloga lista ima 38 clanova od cega su prva 3 clana ista --> odatle m-2 umesto m
+                            if (listaPolja.get(m).equals(v)){
+                                int x = (m - 2) / 6;
+                                int y = (m - 2) % 6;
+                                cilj = new Polje(x, y, (Button) v);
                             }
-                            for (int k = 0; k < 36; k++) {
-                                if (listaPolja.get(k).equals(selectedItem)) {
-                                    int n = k/6;
-                                    int m = k%6 - 1;
-                                    start = new Polje(n, m, (Button) selectedItem);
-                                    Log.d(TAG, "START");
-                                }
+                            if (listaPolja.get(m).equals(selectedItem)) {
+                                int p = (m - 2) / 6;
+                                int q = (m - 2) % 6;
+                                start = new Polje(p, q, (Button) selectedItem);
                             }
-                        };
-
-                        for (int k = 0; k < 36; k++) {
-                            if (listaPolja.get(k).equals(s)){
-                                int n = k/6;
-                                int m = k%6;
-                                start = new Polje(n, m, (Button)selectedItem);
-                                Log.d(TAG, "START");
-                            }
-                            Log.d(TAG, "Start: "+start+", cilj: "+cilj);
-
-                            matrica = m.izmeniMatricu(start, cilj);
-                            for (int j = 0; j < 6; j++) {
-                                List lista = new ArrayList();
-                                for (int k = 0; k < 6; k++) {
-                                    lista.add(matrica[j][k]);
-                                }
-                                Log.d(TAG, "A: " + lista);
-                            }
-                        };*/
-
+                        }
+                        matrica = m.izmeniMatricu(start, cilj);
+                        m.stampajMatricu(matrica);
 
                     }
                     //Ako nije prethodno selektovano obojeno polje za pomeranje
