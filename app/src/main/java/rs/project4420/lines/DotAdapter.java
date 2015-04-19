@@ -112,7 +112,7 @@ public final class DotAdapter extends BaseAdapter{
 
         if (v == null) {
             v = mInflater.inflate(R.layout.grid_item, viewGroup, false);
-            v.setTag(R.id.button, v.findViewById(R.id.button));
+            //v.setTag(R.id.button, v.findViewById(R.id.button));
             v.setTag(R.id.item, v.findViewById(R.id.item));
         }
 

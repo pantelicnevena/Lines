@@ -45,6 +45,15 @@ public class DotsActivity extends ActionBarActivity {
     Random rnd;
     GridView table;
 
+    List<DotButton> mButtons;
+    List<DotView> dots;
+
+    DotItem[][] matrix = new DotItem[6][6];
+
+
+    ValueAnimator animator;
+    int lastSelected = -1;
+
     public DotsActivity() {
     }
 
@@ -55,9 +64,56 @@ public class DotsActivity extends ActionBarActivity {
         setContentView(R.layout.activity_dots);
         table = (GridView) findViewById(R.id.table);
 
+        for (int i = 0; i < 6; i++) {
+            for (int j = 0; j < 6; j++) {
+                matrix[i][j] = new DotItem(R.color.grey);
+            }
+        }
+
+
         GridView gridView = (GridView)findViewById(R.id.table);
-        DotAdapter adapter = new DotAdapter(this);
+        Adapter adapter = new Adapter(this, matrix);
         gridView.setAdapter(adapter);
+        gridView.setHorizontalSpacing(10);
+        gridView.setVerticalSpacing(10);
+        Log.d(TAG, "activity: " + gridView.getItemAtPosition(0) );
+
+        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Log.d(TAG, "position:" + position);
+
+                //stopiraj prethodnu
+                if(animator != null && animator.isRunning()){
+                    animator.end();
+                    view.clearAnimation();
+                    animator = null;
+                }
+
+                if(lastSelected != position){
+                    lastSelected = position;
+
+                    animator = ValueAnimator.ofFloat(0, (float) Math.PI);
+                    animator.setDuration(1000);
+                    animator.setRepeatCount(ValueAnimator.INFINITE);
+
+                    final DotView dotView = ((DotView)view);
+                    final float origRadius = dotView.radius;
+
+                    animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                        @Override
+                        public void onAnimationUpdate(ValueAnimator animation) {
+                            float value = (float) animation.getAnimatedValue();
+                            dotView.radius = origRadius - (float)(Math.abs(Math.sin(value)) * origRadius * .35f);
+                            dotView.invalidate();
+                        }
+                    });
+                    animator.start();
+                } else {
+                    lastSelected = -1;
+                }
+            }
+        });
 
 /*
         Matrica matrica = new Matrica(gridView);
