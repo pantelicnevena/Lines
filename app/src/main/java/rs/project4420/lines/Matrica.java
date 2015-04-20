@@ -30,7 +30,7 @@ public class Matrica {
                 polja[n][m] = 0;
             } else {
                 polja[n][m] = 1;
-                zid.add(new Polje(n, m, polje));
+                zid.add(new Polje(n, m));
             }
         }
         napraviKopiju();

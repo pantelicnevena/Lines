@@ -237,12 +237,12 @@ public final class DotAdapter extends BaseAdapter{
                             if (listaPolja.get(m).equals(v)){
                                 int x = (m - 2) / 6;
                                 int y = (m - 2) % 6;
-                                cilj = new Polje(x, y, (Button) v);
+                                cilj = new Polje(x, y);
                             }
                             if (listaPolja.get(m).equals(selectedItem)) {
                                 int p = (m - 2) / 6;
                                 int q = (m - 2) % 6;
-                                start = new Polje(p, q, (Button) selectedItem);
+                                start = new Polje(p, q);
                             }
                         }
                         matrica = m.izmeniMatricu(start, cilj);

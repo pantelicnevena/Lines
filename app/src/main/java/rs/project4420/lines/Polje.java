@@ -13,10 +13,9 @@ public class Polje {
     public Polje() {
     }
 
-    public Polje(int n, int m, Button b) {
+    public Polje(int n, int m) {
         this.n = n;
         this.m = m;
-        this.b = b;
     }
 
     public int getN() {
@@ -33,14 +32,6 @@ public class Polje {
 
     public void setM(int m) {
         this.m = m;
-    }
-
-    public Button getB() {
-        return b;
-    }
-
-    public void setB(Button b) {
-        this.b = b;
     }
 
     @Override
