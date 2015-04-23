@@ -1,31 +1,17 @@
 package rs.project4420.lines;
 
-import android.animation.AnimatorSet;
-import android.animation.ArgbEvaluator;
-import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.graphics.Color;
-import android.graphics.Paint;
 import android.os.Handler;
 import android.os.Vibrator;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
-import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.GridView;
-import android.widget.Toast;
-
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.*;
@@ -49,6 +35,7 @@ public class DotsActivity extends ActionBarActivity implements AdapterView.OnIte
     boolean pronadjenCilj;
     List<MatrixItem> putanja;
     List<MatrixItem> put;
+    List<ValueAnimator> listaVA;
 
     ValueAnimator animator;
     int lastSelected = -1;
@@ -106,7 +93,7 @@ public class DotsActivity extends ActionBarActivity implements AdapterView.OnIte
         }
         //kliknuto drugo obojeno polje
         if(lastSelected != position){
-            if (matrix[position/6][position%6].getColor() == R.color.grey || matrix[position/6][position%6].getColor() == R.color.grey_dark){
+            if (matrix[position/6][position%6].getColor() == R.color.grey){
                 if (lastSelected == -1) {
                     Vibrator vibe = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
                     vibe.vibrate(40);
@@ -119,12 +106,49 @@ public class DotsActivity extends ActionBarActivity implements AdapterView.OnIte
                     aStar astar = new aStar();
                     putanja = astar.aZvezda(matrixCopyItem, (lastSelected / 6), (lastSelected % 6), (position / 6), (position % 6));
 
-                    if (putanja.size() > 0) {
+                    if (putanja != null) {
                         final List<MatrixItem> finalPutanja = putanja;
 
                         int lastColor = matrix[lastSelected / 6][lastSelected % 6].getColor();
                         matrix[lastSelected / 6][lastSelected % 6].setColor(R.color.grey);
                         matrix[position / 6][position % 6].setColor(lastColor);
+
+                        //animacija puta
+                        listaVA = new ArrayList<>();
+                        for (int i = 0; i <putanja.size() ; i++) {
+                            ValueAnimator va = ValueAnimator.ofFloat(0, (float) Math.PI);
+                            listaVA.add(va);
+                            va.setDuration(2000);
+                            va.setRepeatCount(20);
+                            final DotView tackica = (DotView) gridView.getChildAt(putanja.get(i).getxTrenutno()*6+putanja.get(i).getyTrenutno());
+
+                            final float origRadius = tackica.radius;
+                            va.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                                @Override
+                                public void onAnimationUpdate(ValueAnimator animation) {
+                                    float value = (float) animation.getAnimatedValue();
+                                    tackica.setColorInt((int) (Math.abs(16007990/Math.sin(value))));
+                                    tackica.invalidate();
+                                }
+                            });
+                            va.start();
+                        }
+
+                        //zaustavljanje animacije puta
+                        final List<MatrixItem> finalPutanja1 = putanja;
+                        Handler handler = new Handler();
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                for (int i = 0; i < finalPutanja1.size() ; i++) {
+                                    DotView tackica = (DotView) gridView.getChildAt(finalPutanja1.get(i).getxTrenutno()*6+ finalPutanja1.get(i).getyTrenutno());
+                                    listaVA.get(i).end();
+                                    tackica.clearAnimation();
+                                    tackica.setColor(R.color.grey);
+                                    tackica.invalidate();
+                                }
+                            }
+                        }, 250);
 
                     }else {
                         lastSelected = -1;
@@ -228,54 +252,4 @@ public class DotsActivity extends ActionBarActivity implements AdapterView.OnIte
         return praznaPolja;
     };
 
-
-
-    public boolean proveraPolja(int[][] kopija, int n, int m, int xCilj, int yCilj){
-        if ((n+1 <= 5) && (n+1 >= 0) && (m <= 5) && (m >= 0) && (kopija[n+1][m] == 0)){
-            if (n+1 == xCilj && m == yCilj) {
-                pronadjenCilj = true;
-            } else{
-                if (pronadjenCilj == false) {
-                    kopija[n + 1][m] = 2;
-                    proveraPolja(kopija, n + 1, m, xCilj, yCilj);
-                    //Log.d(TAG, "DOLE");
-                }
-            }
-        }
-        if ((n-1 <= 5) && (n-1 >= 0) && (m <= 5) && (m >= 0) && (kopija[n-1][m] == 0 )){
-            if (n-1 == xCilj && m == yCilj) {
-                pronadjenCilj = true;
-            } else{
-                if (pronadjenCilj == false) {
-                    kopija[n - 1][m] = 2;
-                    proveraPolja(kopija, n - 1, m, xCilj, yCilj);
-                    //Log.d(TAG, "GORE");
-                }
-            }
-        }
-        if ((n <= 5) && (n >= 0) && (m+1 <= 5) && (m+1 >= 0) && (kopija[n][m+1] == 0 )){
-            if (n == xCilj && m+1 == yCilj) {
-                pronadjenCilj = true;
-            } else {
-                if (pronadjenCilj == false) {
-                    kopija[n][m + 1] = 2;
-                    proveraPolja(kopija, n, m + 1, xCilj, yCilj);
-                    //Log.d(TAG, "DESNO");
-                }
-            }
-        }
-        if ((n <= 5) && (n >= 0) && (m-1 <= 5) && (m-1 >= 0) && (kopija[n][m-1] == 0 )){
-            if (n == xCilj && m-1 == yCilj) {
-                pronadjenCilj = true;
-            } else {
-                if (pronadjenCilj == false) {
-                    kopija[n][m - 1] = 2;
-                    proveraPolja(kopija, n, m - 1, xCilj, yCilj);
-                    //Log.d(TAG, "LEVO");
-                }
-            }
-        }
-        //stampajKopiju(kopija);
-        return pronadjenCilj;
-    }
 }

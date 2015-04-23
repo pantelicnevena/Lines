@@ -137,7 +137,7 @@ public class aStar {
         //Log.d(TAG, ""+otvorenaLista);
         Log.d(TAG, "Putanja: "+put);
 
-        if (!kraj) put = new ArrayList<>();
+        if (!kraj) put = null;
         return put;
     }
 
