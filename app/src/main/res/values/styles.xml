@@ -12,5 +12,6 @@
     <color name="yellow">#ffeb3b</color>
     <color name="orange">#ff9800</color>
     <color name="grey">#bdbdbd</color>
-    <!--<color name="grey">#f1f1f1</color>-->
+    <color name="grey_dark">#ff7b7b7b</color>
+    <color name="hsv">#ff7b7b7b</color>
 </resources>

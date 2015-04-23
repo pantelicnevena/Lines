@@ -59,4 +59,5 @@ public class DotView extends View {
     public void setColor(int color) {
         paint.setColor(getResources().getColor(color));
     }
+
 }

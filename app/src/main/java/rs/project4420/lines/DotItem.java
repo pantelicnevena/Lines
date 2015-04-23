@@ -10,6 +10,10 @@ public class DotItem {
         this.color = color;
     }
 
+    public DotItem() {
+
+    }
+
     public int getColor() {
         return color;
     }
@@ -17,6 +21,5 @@ public class DotItem {
     public void setColor(int color) {
         this.color = color;
     }
-
 
 }
