@@ -64,4 +64,5 @@ public class DotView extends View {
         paint.setColor(color);
     }
 
+
 }

@@ -50,8 +50,8 @@ public class aStar {
             }
 
             zatvorenaLista.add(next);
-            Log.d(TAG, next + " " + zatvorenaLista);
-            Log.d(TAG,  ""+otvorenaLista);
+            //Log.d(TAG, next + " " + zatvorenaLista);
+            //Log.d(TAG,  ""+otvorenaLista);
 
             for (int i = 0; i < otvorenaLista.size(); i++) {
                 if (otvorenaLista.get(i) == next) otvorenaLista.remove(i);
@@ -135,7 +135,7 @@ public class aStar {
 
         //Log.d(TAG, ""+zatvorenaLista);
         //Log.d(TAG, ""+otvorenaLista);
-        Log.d(TAG, "Putanja: "+put);
+        //Log.d(TAG, "Putanja: "+put);
 
         if (!kraj) put = null;
         return put;
@@ -159,7 +159,7 @@ public class aStar {
         for (int i = put.size()-2; i > 0 ; i--) {
             naopakPut.add(put.get(i));
         }
-        Log.d(TAG, ""+naopakPut);
+//        Log.d(TAG, ""+naopakPut);
         return naopakPut;
     }
 

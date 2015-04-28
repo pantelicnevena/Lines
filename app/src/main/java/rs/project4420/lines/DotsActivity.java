@@ -1,6 +1,7 @@
 package rs.project4420.lines;
 
 import android.animation.ValueAnimator;
+import android.app.ListActivity;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Handler;
@@ -94,6 +95,7 @@ public class DotsActivity extends ActionBarActivity implements AdapterView.OnIte
         //kliknuto drugo obojeno polje
         if(lastSelected != position){
             if (matrix[position/6][position%6].getColor() == R.color.grey){
+                //ako prethodno nije kliknuto na obojeno dugme
                 if (lastSelected == -1) {
                     Vibrator vibe = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
                     vibe.vibrate(40);
@@ -108,49 +110,24 @@ public class DotsActivity extends ActionBarActivity implements AdapterView.OnIte
 
                     if (putanja != null) {
                         final List<MatrixItem> finalPutanja = putanja;
-
                         int lastColor = matrix[lastSelected / 6][lastSelected % 6].getColor();
                         matrix[lastSelected / 6][lastSelected % 6].setColor(R.color.grey);
                         matrix[position / 6][position % 6].setColor(lastColor);
 
-                        //animacija puta
-                        listaVA = new ArrayList<>();
-                        for (int i = 0; i <putanja.size() ; i++) {
-                            ValueAnimator va = ValueAnimator.ofFloat(0, (float) Math.PI);
-                            listaVA.add(va);
-                            va.setDuration(2000);
-                            va.setRepeatCount(20);
-                            final DotView tackica = (DotView) gridView.getChildAt(putanja.get(i).getxTrenutno()*6+putanja.get(i).getyTrenutno());
+                        tranzicija(matrix, position, putanja, gridView);
+                        lastSelected = -1;
 
-                            final float origRadius = tackica.radius;
-                            va.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-                                @Override
-                                public void onAnimationUpdate(ValueAnimator animation) {
-                                    float value = (float) animation.getAnimatedValue();
-                                    tackica.setColorInt((int) (Math.abs(16007990/Math.sin(value))));
-                                    tackica.invalidate();
-                                }
-                            });
-                            va.start();
-                        }
-
-                        //zaustavljanje animacije puta
-                        final List<MatrixItem> finalPutanja1 = putanja;
+                        Log.d(TAG, "drugi");
                         Handler handler = new Handler();
                         handler.postDelayed(new Runnable() {
                             @Override
                             public void run() {
-                                for (int i = 0; i < finalPutanja1.size() ; i++) {
-                                    DotView tackica = (DotView) gridView.getChildAt(finalPutanja1.get(i).getxTrenutno()*6+ finalPutanja1.get(i).getyTrenutno());
-                                    listaVA.get(i).end();
-                                    tackica.clearAnimation();
-                                    tackica.setColor(R.color.grey);
-                                    tackica.invalidate();
-                                }
+                                vratiNoviDot(matrix);
+                                adapter.notifyDataSetChanged();
                             }
-                        }, 250);
+                        }, 370); //pauza 350ms
 
-                    }else {
+                    }else { //ako ne moze da stigne do cilja
                         lastSelected = -1;
                         Vibrator vibe = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
                         vibe.vibrate(40);
@@ -159,7 +136,7 @@ public class DotsActivity extends ActionBarActivity implements AdapterView.OnIte
 
                     adapter.notifyDataSetChanged();
                 }
-            } else{
+            } else { //pokretanje animacije kliknutog dugmeta
                 animator = ValueAnimator.ofFloat(0, (float) Math.PI);
                 animator.setDuration(1000);
                 animator.setRepeatCount(ValueAnimator.INFINITE);
@@ -184,16 +161,19 @@ public class DotsActivity extends ActionBarActivity implements AdapterView.OnIte
         }
     }
 
-    public void stampajMatricu (DotItem[][] matrix){
-        for (int i = 0; i < 6; i++) {
-            List lista = new ArrayList();
-            for (int j = 0; j < 6; j++) {
-                if (matrix[i][j].getColor() == R.color.grey)
-                    lista.add(0);
-                else lista.add(1);
-            }
-            Log.d(TAG, i + ": " + lista);
-        }
+    private DotItem[][] vratiNoviDot(DotItem[][] matrix) {
+        rnd = new Random();
+        List<Polje> praznaPolja = vratiListuPraznihPolja(matrix);
+
+        int praznoPolje = rnd.nextInt(praznaPolja.size());
+        int boja = colors.get(rnd.nextInt(7));
+
+        Polje p = praznaPolja.get(praznoPolje);
+        matrix[p.getN()][p.getM()].setColor(boja);
+
+        Log.d(TAG, "Pozicija:" + p.getN() + "" + p.getM() + ", boja: " + matrix[p.getN()][p.getM()].getColor());
+
+        return matrix;
     }
 
     public int[][] napraviKopiju (DotItem[][] matrix){
@@ -249,7 +229,50 @@ public class DotsActivity extends ActionBarActivity implements AdapterView.OnIte
                 if (matrix[i][j].getColor() == R.color.grey) praznaPolja.add(new Polje(i,j));
             }
         }
+        Log.d(TAG, "Lista praznih polja: "+praznaPolja);
         return praznaPolja;
     };
+
+    public void tranzicija(final DotItem[][]matrix, int position, List<MatrixItem> put, GridView gv){
+        //animacija puta
+        final List<ValueAnimator> animList = new ArrayList<>();
+        for (int i = 0; i <put.size() ; i++) {
+
+            ValueAnimator va = ValueAnimator.ofFloat(0, 1);
+            animList.add(va);
+            va.setDuration(300);
+            va.setRepeatCount(2);
+            final DotView tackica = (DotView) gv.getChildAt(put.get(i).getxTrenutno()*6+put.get(i).getyTrenutno());
+            final int color = matrix[position/6][position%6].getColor();
+            va.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                @Override
+                public void onAnimationUpdate(ValueAnimator animation) {
+                    float value = (float) animation.getAnimatedFraction();
+                    if (value<=1 && value>0.8) tackica.setColor(R.color.grey);
+                    if (value<=0.8 && value>=0.2) tackica.setColor(color);
+                    if (value<=0 && value>0.2) tackica.setColor(R.color.grey);
+                    tackica.invalidate();
+                }
+            });
+            va.start();
+
+            //zaustavljanje animacije puta
+            final List<MatrixItem> finalPutanja1 = put;
+            Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    for (int i = 0; i < finalPutanja1.size() ; i++) {
+                        DotView tackica = (DotView) gridView.getChildAt(finalPutanja1.get(i).getxTrenutno()*6+ finalPutanja1.get(i).getyTrenutno());
+                        animList.get(i).end();
+                        tackica.clearAnimation();
+                        tackica.setColor(R.color.grey);
+                        tackica.invalidate();
+
+                    }
+                }
+            }, 350); //pauza 350ms
+        }
+    }
 
 }
