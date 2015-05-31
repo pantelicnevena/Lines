@@ -9,12 +9,14 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.games.Games;
+import com.google.android.gms.games.GamesStatusCodes;
 import com.google.android.gms.games.multiplayer.Multiplayer;
 import com.google.android.gms.games.multiplayer.realtime.RoomConfig;
 import com.google.android.gms.games.multiplayer.turnbased.TurnBasedMatch;
@@ -33,6 +35,7 @@ public class MainActivity extends Activity implements
         GoogleApiClient.OnConnectionFailedListener {
 
     private static final String TAG = "MainActivity1";
+    private static final int TOAST_DELAY = Toast.LENGTH_SHORT;;
 
     private static int RC_SIGN_IN = 9001;
     final static int RC_SELECT_PLAYERS = 10000;
@@ -89,6 +92,7 @@ public class MainActivity extends Activity implements
         if (!mInSignInFlow && !mExplicitSignOut) {
             // auto sign in
             mGoogleApiClient.connect();
+            Log.d(TAG, "Konekcija");
         }
     }
 
@@ -190,7 +194,9 @@ public class MainActivity extends Activity implements
         Intent intent = Games
                 .TurnBasedMultiplayer
                 .getSelectOpponentsIntent(mGoogleApiClient, 1, 1, true);
+                // mGoogleApiCLent, min broj igraca, broj dodatnih igraca, automatch:true/false
         startActivityForResult(intent, RC_SELECT_PLAYERS);
+        Log.d(TAG, "Selektujem igraca");
     }
 
     @Override
@@ -204,7 +210,8 @@ public class MainActivity extends Activity implements
             } else {
                 BaseGameUtils.showActivityResultError(this, request, response, R.string.signin_other_error);
             }
-        } /*else if (request == RC_LOOK_AT_MATCHES) {
+        }
+            /*else if (request == RC_LOOK_AT_MATCHES) {
             // Returning from the 'Select Match' dialog
 
             if (response != Activity.RESULT_OK) {
@@ -265,12 +272,17 @@ public class MainActivity extends Activity implements
                         @Override
                         public void onResult(TurnBasedMultiplayer.InitiateMatchResult result) {
                             // Check if the status code is not success.
+//                            processResult(result);
+
                             Status status = result.getStatus();
                             if (status.isSuccess()) {
-                                Log.d(TAG, ""+status.getStatusMessage());
-                                //return;
-                                //            TODO vraca vrednost 0 za status.getStatusCode i null za status.getStatusMessage
+                                Log.d(TAG, "status: " +status.getStatusCode());
+                                return;
+                                //TODO vraca vrednost 0 za status.getStatusCode i null za status.getStatusMessage
+                            } else{
+                                Log.d(TAG, "NEMA STATUSA");
                             }
+
                             Log.d(TAG, "Result: "+result);
 
                             TurnBasedMatch match = result.getMatch();
@@ -296,6 +308,7 @@ public class MainActivity extends Activity implements
             Intent i = new Intent(getApplicationContext(), GameActivity.class);
             i.putExtra("player1", Games.Players.getCurrentPlayerId(mGoogleApiClient));
             i.putExtra("player2", invitees.toString());
+            Log.d(TAG, "mGoogle " + mGoogleApiClient);
             //i.putExtra("matchID", mMatch.getMatchId());
             //String turnData = mDataView.getText().toString();
             startActivity(i);
@@ -372,6 +385,8 @@ public class MainActivity extends Activity implements
     }
 
 
+
+
     /**
      * Get the next participant. In this function, we assume that we are
      * round-robin, with all known players going before all automatch players.
@@ -432,22 +447,25 @@ public class MainActivity extends Activity implements
         }
 
         isDoingTurn = false;
-
+        Log.d(TAG, "This match is canceled. All other players will have their game ended.");
     }
 
     private void processResult(TurnBasedMultiplayer.InitiateMatchResult result) {
         TurnBasedMatch match = result.getMatch();
 
         if (!checkStatusCode(match, result.getStatus().getStatusCode())) {
+            Log.d(TAG, "Ne postoji status kod"+checkStatusCode(match, result.getStatus().getStatusCode()));
             return;
         }
 
         if (match.getData() != null) {
             // This is a game that has already started, so I'll just start
+            Log.d(TAG, "Mec razlicit od null");
             updateMatch(match);
             return;
         }
 
+        Log.d(TAG, "Zapocet mec");
         startMatch(match);
     }
 
@@ -484,10 +502,45 @@ public class MainActivity extends Activity implements
     // more cases, and probably report more accurate results.
     private boolean checkStatusCode(TurnBasedMatch match, int statusCode) {
         switch (statusCode) {
-
+            case GamesStatusCodes.STATUS_OK:
+                return true;
+            case GamesStatusCodes.STATUS_NETWORK_ERROR_OPERATION_DEFERRED:
+                // This is OK; the action is stored by Google Play Services and will be dealt with later.
+                Toast.makeText(this, "Stored action for later. (Please remove this toast before release.)", TOAST_DELAY).show();
+                // NOTE: This toast is for informative reasons only; please remove it from your final application.
+                return true;
+            case GamesStatusCodes.STATUS_MULTIPLAYER_ERROR_NOT_TRUSTED_TESTER:
+                Log.d(TAG, "STATUS_MULTIPLAYER_ERROR_NOT_TRUSTED_TESTER");
+                break;
+            case GamesStatusCodes.STATUS_MATCH_ERROR_ALREADY_REMATCHED:
+                Log.d(TAG, "STATUS_MATCH_ERROR_ALREADY_REMATCHED");
+                break;
+            case GamesStatusCodes.STATUS_NETWORK_ERROR_OPERATION_FAILED:
+                Log.d(TAG, "STATUS_NETWORK_ERROR_OPERATION_FAILED");
+                break;
+            case GamesStatusCodes.STATUS_CLIENT_RECONNECT_REQUIRED:
+                Log.d(TAG, "STATUS_CLIENT_RECONNECT_REQUIRED");
+                break;
+            case GamesStatusCodes.STATUS_INTERNAL_ERROR:
+                Log.d(TAG, "STATUS_INTERNAL_ERROR");
+                break;
+            case GamesStatusCodes.STATUS_MATCH_ERROR_INACTIVE_MATCH:
+                Log.d(TAG, "STATUS_MATCH_ERROR_INACTIVE_MATCH");
+                break;
+            case GamesStatusCodes.STATUS_MATCH_ERROR_LOCALLY_MODIFIED:
+                Log.d(TAG, "STATUS_MATCH_ERROR_LOCALLY_MODIFIED");
+                break;
+            default:
+                Log.d(TAG, "Unexpected status");
+                Log.d(TAG, "Did not have warning or string to deal with: "
+                        + statusCode);
         }
+
 
         return false;
     }
 
+    public GoogleApiClient getmGoogleApiClient() {
+        return mGoogleApiClient;
+    }
 }

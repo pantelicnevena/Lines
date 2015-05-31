@@ -24,6 +24,7 @@ import java.util.ArrayList;
 public class GameActivity extends Activity {
 
     private static final String TAG = "GameActivity";
+    private static final String TURN_BASED_MATCH_KEY = "GameActivity:TurnBasedMatch";
     public GoogleApiClient mGoogleApiClient;
     public TurnBasedMatch mMatch;
     public int turnCounter = 0;
@@ -41,6 +42,7 @@ public class GameActivity extends Activity {
         String player1 = getIntent().getStringExtra("player1");
         String player2 = getIntent().getStringExtra("player2").substring(1, getIntent().getStringExtra("player2").length()-1);
 
+
         /*mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addApi(Games.API)
                 .addScope(Games.SCOPE_GAMES)
@@ -53,6 +55,8 @@ public class GameActivity extends Activity {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                String nextParticipantId = getNextParticipantId();
+                Log.d(TAG, "NextPart: "+nextParticipantId);
             }
         });
 
@@ -95,7 +99,7 @@ public class GameActivity extends Activity {
                     }
                 });
 
-    }
+    }*/
 
     public String getNextParticipantId() {
 
@@ -124,6 +128,6 @@ public class GameActivity extends Activity {
             // person to play against.
             return null;
         }
-    }*/
+    }
 
 }
