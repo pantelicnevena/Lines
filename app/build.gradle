@@ -5,7 +5,7 @@ android {
         config {
             keyAlias 'lines'
             keyPassword 'ciletnap'
-            storeFile file('/home/nevena/AndroidStudioProjects/Lines/keystore.jks')
+            storeFile file('/home/enco/IdeaProjects/Lines/keystore.jks')
             storePassword 'ciletnap'
         }
     }

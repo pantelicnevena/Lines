@@ -33,19 +33,19 @@ public class MatchInitiatedCallback implements ResultCallback<TurnBasedMultiplay
         mMatch = match;
         setmMatch(mMatch);
 
-        // If this player is not the first player in this match, continue.
+        // If this player is not the first player in this mMatch, continue.
         if (match.getData() != null) {
             Log.d(TAG, "Turn UI");
-            //showTurnUI(match);
+            //showTurnUI(mMatch);
             return;
         }
 
         // Otherwise, this is the first player. Initialize the game state.
-//        initGame(match);
+//        initGame(mMatch);
 
         // Let the player take the first turn
         Log.d(TAG, "Show turn");
-//        showTurnUI(match);
+//        showTurnUI(mMatch);
 
     }
 

@@ -230,6 +230,10 @@ public class DotsActivity extends ActionBarActivity implements AdapterView.OnIte
         }
     };
 
+    /**
+     *
+     * @param kopija
+     */
     public void stampajKopijuPolja(MatrixItem[][] kopija){
         for (int j = 0; j < 6; j++) {
             List lista = new ArrayList();
@@ -240,6 +244,11 @@ public class DotsActivity extends ActionBarActivity implements AdapterView.OnIte
         }
     };
 
+    /**
+     *
+     * @param matrix
+     * @return
+     */
     public List<Polje> vratiListuPraznihPolja(DotItem[][] matrix){
         List<Polje> praznaPolja = new ArrayList<>();
         for (int i = 0; i < 6; i++) {

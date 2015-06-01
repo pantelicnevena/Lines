@@ -219,11 +219,11 @@ public class MainActivity extends Activity implements
                 return;
             }
 
-            TurnBasedMatch match = data
+            TurnBasedMatch mMatch = data
                     .getParcelableExtra(Multiplayer.EXTRA_TURN_BASED_MATCH);
 
-            if (match != null) {
-                updateMatch(match);
+            if (mMatch != null) {
+                updateMatch(mMatch);
             }
 
         }*/ else if (request == RC_SELECT_PLAYERS) {
@@ -261,7 +261,7 @@ public class MainActivity extends Activity implements
                     .setAutoMatchCriteria(autoMatchCriteria)
                     .build();
 
-            // Start the match
+            // Start the mMatch
             /*MatchInitiatedCallback mic = new MatchInitiatedCallback();
             Games.TurnBasedMultiplayer.createMatch(mGoogleApiClient, tbmc).setResultCallback(
                     mic);*/
@@ -288,19 +288,19 @@ public class MainActivity extends Activity implements
                             TurnBasedMatch match = result.getMatch();
                             mMatch = match;
 
-                            // If this player is not the first player in this match, continue.
+                            // If this player is not the first player in this mMatch, continue.
                             if (match.getData() != null) {
                                 Log.d(TAG, "Turn UI");
-                                //showTurnUI(match);
+                                //showTurnUI(mMatch);
                                 return;
                             }
 
                             // Otherwise, this is the first player. Initialize the game state.
-                            //        initGame(match);
+                            //        initGame(mMatch);
 
                             // Let the player take the first turn
                             Log.d(TAG, "Show turn");
-                            //        showTurnUI(match);
+                            //        showTurnUI(mMatch);
                         }
                     }
             );
@@ -320,7 +320,7 @@ public class MainActivity extends Activity implements
 
     // startMatch() happens in response to the createTurnBasedMatch()
     // above. This is only called on success, so we should have a
-    // valid match object. We're taking this opportunity to setup the
+    // valid mMatch object. We're taking this opportunity to setup the
     // game, saving our initial state. Calling takeTurn() will
     // callback to OnTurnBasedMatchUpdated(), which will show the game
     // UI.
@@ -411,7 +411,7 @@ public class MainActivity extends Activity implements
 //                showWarning("Expired!", "This game is expired.  So sad!");
                 return;
             case TurnBasedMatch.MATCH_STATUS_AUTO_MATCHING:
-//                showWarning("Waiting for auto-match...",
+//                showWarning("Waiting for auto-mMatch...",
 //                        "We're still waiting for an automatch partner.");
                 return;
             case TurnBasedMatch.MATCH_STATUS_COMPLETE:
@@ -447,7 +447,7 @@ public class MainActivity extends Activity implements
         }
 
         isDoingTurn = false;
-        Log.d(TAG, "This match is canceled. All other players will have their game ended.");
+        Log.d(TAG, "This mMatch is canceled. All other players will have their game ended.");
     }
 
     private void processResult(TurnBasedMultiplayer.InitiateMatchResult result) {
