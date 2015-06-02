@@ -67,6 +67,14 @@ public class SecondActivity extends Activity
                 startActivityForResult(intent, RC_LOOK_AT_MATCHES);
             }
         });
+
+        findViewById(R.id.single_player).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), DotsActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
     @Override

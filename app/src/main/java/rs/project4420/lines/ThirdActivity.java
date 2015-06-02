@@ -35,6 +35,7 @@ public class ThirdActivity extends Activity
 
     GameData gameData;
     TurnBasedMatch mMatch;
+    private GameData mTurnData;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -158,6 +159,7 @@ public class ThirdActivity extends Activity
             @Override
             public void onResult(TurnBasedMultiplayer.UpdateMatchResult updateMatchResult) {
                 Log.d(TAG, "treba update match!!!");
+                updateMatch(mMatch);
             }
         });
     }
@@ -187,5 +189,22 @@ public class ThirdActivity extends Activity
     @Override
     public void onTurnBasedMatchRemoved(String s) {
 
+    }
+
+    public void updateMatch(TurnBasedMatch match){
+        mMatch = match;
+        int status = mMatch.getStatus();
+        int turnStatus = mMatch.getTurnStatus();
+
+        Log.d(TAG, "Status: "+status);
+        Log.d(TAG, "Turn status: "+turnStatus);
+
+
+        switch (turnStatus){
+            case 1: gameData = GameData.unpersist(mMatch.getData());
+                Log.d(TAG, ""+gameData);
+        }
+
+        mTurnData = null;
     }
 }
