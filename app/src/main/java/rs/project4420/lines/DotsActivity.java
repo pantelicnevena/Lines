@@ -3,7 +3,18 @@ package rs.project4420.lines;
 import android.animation.ValueAnimator;
 import android.app.ListActivity;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.BitmapShader;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
+import android.graphics.Rect;
+import android.graphics.RectF;
+import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Vibrator;
 import android.support.v7.app.ActionBarActivity;
@@ -12,6 +23,18 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.games.Games;
+import com.google.android.gms.games.Player;
+
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -20,7 +43,8 @@ import java.util.*;
 import rs.project4420.lines.solver.aStar;
 
 
-public class DotsActivity extends ActionBarActivity implements AdapterView.OnItemClickListener {
+public class DotsActivity extends ActionBarActivity implements AdapterView.OnItemClickListener, GoogleApiClient.ConnectionCallbacks,
+        GoogleApiClient.OnConnectionFailedListener {
 
     private static final String TAG = "DotsActivity";
     Adapter adapter;
@@ -40,6 +64,8 @@ public class DotsActivity extends ActionBarActivity implements AdapterView.OnIte
 
     ValueAnimator animator;
     int lastSelected = -1;
+    private GoogleApiClient mGoogleApiClient;
+    private AsyncTask<String, Void, Bitmap> dit;
 
     public DotsActivity() {
     }
@@ -47,6 +73,15 @@ public class DotsActivity extends ActionBarActivity implements AdapterView.OnIte
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        //Hide Toolbar
+        getSupportActionBar().hide();
+
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(Games.API).addScope(Games.SCOPE_GAMES)
+                .build();
 
         setContentView(R.layout.activity_dots);
         table = (GridView) findViewById(R.id.table);
@@ -192,6 +227,7 @@ public class DotsActivity extends ActionBarActivity implements AdapterView.OnIte
         }, 300);
 
         Log.d(TAG, "Pozicija:" + p.getN() + "" + p.getM() + ", boja: " + matrix[p.getN()][p.getM()].getColor());
+        findViewById(R.id.next_dot);
 
         return matrix;
     }
@@ -300,9 +336,42 @@ public class DotsActivity extends ActionBarActivity implements AdapterView.OnIte
         }
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        mGoogleApiClient.connect();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        mGoogleApiClient.disconnect();
+    }
+
+    @Override
+    public void onConnected(Bundle bundle) {
+        Log.d(TAG, "connected");
+
+        ImageView iv = (ImageView) findViewById(R.id.player_image);
 
 
+        if (Games.Players.getCurrentPlayer(mGoogleApiClient).getIconImageUrl() != null){
+            String url = Games.Players.getCurrentPlayer(mGoogleApiClient).getIconImageUrl().toString();
+            dit = new DownloadImageTask(iv).execute(url);
+        } else {
+            dit = new DownloadImageTask(iv).execute("https://lh3.googleusercontent.com/-9x24WfH1Ri8/AAAAAAAAAAI/AAAAAAAAAAA/zhHK3nMbRXs/s120-c/photo.jpg");
+        }
 
+    }
 
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+
+    }
 
 }

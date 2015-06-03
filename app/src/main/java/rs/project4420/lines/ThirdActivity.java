@@ -4,12 +4,15 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
+import android.view.View;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.games.Games;
+import com.google.android.gms.games.GamesStatusCodes;
 import com.google.android.gms.games.multiplayer.Invitation;
 import com.google.android.gms.games.multiplayer.OnInvitationReceivedListener;
 import com.google.android.gms.games.multiplayer.turnbased.OnTurnBasedMatchUpdateReceivedListener;
@@ -30,29 +33,29 @@ public class ThirdActivity extends Activity
     private static final int RC_SIGN_IN = 9001;
     private GoogleApiClient mGoogleApiClient;
     private boolean mResolvingConnectionFailure;
-
     ArrayList<String> invitees;
-
     GameData gameData;
     TurnBasedMatch mMatch;
-    private GameData mTurnData;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_third);
-
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
                 .addApi(Games.API).addScope(Games.SCOPE_GAMES)
                 .build();
-
-
         invitees = getIntent().getStringArrayListExtra("invitees");
         Log.d(TAG, invitees.toString());
 
+        findViewById(R.id.send_inv).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //TODO take turn
 
+            }
+        });
     }
 
     @Override
@@ -100,7 +103,6 @@ public class ThirdActivity extends Activity
 
     @Override
     public void onConnectionSuspended(int i) {
-
     }
 
     @Override
@@ -109,8 +111,8 @@ public class ThirdActivity extends Activity
             // Already resolving
             return;
         }
-
         Log.d(TAG, "connection failed");
+
         // If the sign in button was clicked or if auto sign-in is enabled,
         // launch the sign-in flow
         mResolvingConnectionFailure = true;
@@ -124,7 +126,6 @@ public class ThirdActivity extends Activity
                 RC_SIGN_IN, "error message")) {
             mResolvingConnectionFailure = false;
         }
-
     }
 
     @Override
@@ -133,17 +134,13 @@ public class ThirdActivity extends Activity
         if(!status.isSuccess()){
             Log.d(TAG, "status error: (" + status.getStatusCode() + ")" + status.getStatusMessage());
         }
-
         TurnBasedMatch match = result.getMatch();
-
         // If this player is not the first player in this mMatch, continue.
         if (match.getData() == null) {
             initGame(match);
         }
-
         // Let the player take the first turn
         showTurnUI(match);
-
     }
 
     private void initGame(TurnBasedMatch match) {
@@ -159,7 +156,8 @@ public class ThirdActivity extends Activity
             @Override
             public void onResult(TurnBasedMultiplayer.UpdateMatchResult updateMatchResult) {
                 Log.d(TAG, "treba update match!!!");
-                updateMatch(mMatch);
+
+                updateMatch(updateMatchResult);
             }
         });
     }
@@ -167,7 +165,6 @@ public class ThirdActivity extends Activity
     private void showTurnUI(TurnBasedMatch match) {
         byte[] data = match.getData();
         gameData = GameData.unpersist(data);
-
         // adapter.notifyDataSetChanged();
     }
 
@@ -178,7 +175,6 @@ public class ThirdActivity extends Activity
 
     @Override
     public void onInvitationRemoved(String s) {
-
     }
 
     @Override
@@ -188,23 +184,10 @@ public class ThirdActivity extends Activity
 
     @Override
     public void onTurnBasedMatchRemoved(String s) {
+    }
+
+    public void updateMatch(TurnBasedMultiplayer.UpdateMatchResult result){
 
     }
 
-    public void updateMatch(TurnBasedMatch match){
-        mMatch = match;
-        int status = mMatch.getStatus();
-        int turnStatus = mMatch.getTurnStatus();
-
-        Log.d(TAG, "Status: "+status);
-        Log.d(TAG, "Turn status: "+turnStatus);
-
-
-        switch (turnStatus){
-            case 1: gameData = GameData.unpersist(mMatch.getData());
-                Log.d(TAG, ""+gameData);
-        }
-
-        mTurnData = null;
-    }
 }

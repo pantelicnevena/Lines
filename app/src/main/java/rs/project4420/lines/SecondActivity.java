@@ -24,20 +24,16 @@ import java.util.ArrayList;
 public class SecondActivity extends Activity
         implements GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener{
-
     private static final String TAG = "SecondAct";
     private static final int RC_SIGN_IN = 9001;
     private static final int RQ_ROOM = 9002;
     private static final int RC_LOOK_AT_MATCHES = 9003;
-
     private GoogleApiClient mGoogleApiClient;
     private boolean mResolvingConnectionFailure;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_second);
-
         if (mGoogleApiClient != null) {
             if(mGoogleApiClient.isConnected())
                 Log.d(TAG, "already connected");
@@ -51,7 +47,6 @@ public class SecondActivity extends Activity
                     .addApi(Games.API).addScope(Games.SCOPE_GAMES)
                     .build();
         }
-
         findViewById(R.id.get_room_btn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -59,7 +54,6 @@ public class SecondActivity extends Activity
                 startActivityForResult(intent, RQ_ROOM);
             }
         });
-
         findViewById(R.id.matches_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -76,11 +70,9 @@ public class SecondActivity extends Activity
             }
         });
     }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
         if(requestCode == RQ_ROOM){
             if(resultCode == Activity.RESULT_OK){
                 final ArrayList<String> invitees = data.getStringArrayListExtra(Games.EXTRA_PLAYER_IDS);
@@ -89,12 +81,11 @@ public class SecondActivity extends Activity
                 startActivity(intent);
             }
         }
-
         if (requestCode == RC_LOOK_AT_MATCHES) {
-            // Returning from the 'Select Match' dialog
 
+            // Returning from the 'Select Match' dialog
             if (resultCode != Activity.RESULT_OK) {
-                // user canceled
+            // user canceled
                 return;
             }
 
@@ -103,6 +94,7 @@ public class SecondActivity extends Activity
 
             if (match != null) {
                 Log.d(TAG, "match = null");
+                //TODO pravljenje poteza za mec iz inboxa
             }
         }
     }
@@ -126,7 +118,6 @@ public class SecondActivity extends Activity
 
     @Override
     public void onConnectionSuspended(int i) {
-
     }
 
     @Override
@@ -135,8 +126,8 @@ public class SecondActivity extends Activity
             // Already resolving
             return;
         }
-
         Log.d(TAG, "connection failed");
+
         // If the sign in button was clicked or if auto sign-in is enabled,
         // launch the sign-in flow
         mResolvingConnectionFailure = true;
@@ -148,8 +139,8 @@ public class SecondActivity extends Activity
         if (!BaseGameUtils.resolveConnectionFailure(this,
                 mGoogleApiClient, connectionResult,
                 RC_SIGN_IN, "error message")) {
+
             mResolvingConnectionFailure = false;
         }
-
     }
 }
