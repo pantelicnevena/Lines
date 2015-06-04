@@ -24,9 +24,7 @@ import com.google.android.gms.games.multiplayer.turnbased.TurnBasedMatchConfig;
 import com.google.android.gms.games.multiplayer.turnbased.TurnBasedMultiplayer;
 import com.google.example.games.basegameutils.BaseGameUtils;
 
-import java.nio.charset.Charset;
 import java.util.ArrayList;
-import java.util.List;
 
 
 public class MainActivity extends Activity implements
@@ -35,7 +33,7 @@ public class MainActivity extends Activity implements
         GoogleApiClient.OnConnectionFailedListener {
 
     private static final String TAG = "MainActivity1";
-    private static final int TOAST_DELAY = Toast.LENGTH_SHORT;;
+    private static final int TOAST_DELAY = Toast.LENGTH_SHORT;
 
     private static int RC_SIGN_IN = 9001;
     final static int RC_SELECT_PLAYERS = 10000;
@@ -223,7 +221,7 @@ public class MainActivity extends Activity implements
                     .getParcelableExtra(Multiplayer.EXTRA_TURN_BASED_MATCH);
 
             if (mMatch != null) {
-                updateMatch(mMatch);
+                processResult(mMatch);
             }
 
         }*/ else if (request == RC_SELECT_PLAYERS) {

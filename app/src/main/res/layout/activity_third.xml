@@ -7,6 +7,22 @@
     android:orientation="vertical"
     tools:context="rs.project4420.lines.ThirdActivity">
 
+    <TextView
+        android:id="@+id/data_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <EditText
+        android:id="@+id/data_edit"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <Button
+        android:id="@+id/send_btn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="takeTurn()"/>
+
     <Button
         android:id="@+id/send_inv"
         android:layout_width="match_parent"
@@ -14,8 +30,5 @@
         android:text="Send invitation"
         />
 
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
 
 </LinearLayout>

@@ -2,20 +2,18 @@ package rs.project4420.lines;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.games.Games;
+import com.google.android.gms.games.multiplayer.Invitation;
 import com.google.android.gms.games.multiplayer.Multiplayer;
-import com.google.android.gms.games.multiplayer.realtime.RoomConfig;
+import com.google.android.gms.games.multiplayer.OnInvitationReceivedListener;
 import com.google.android.gms.games.multiplayer.turnbased.TurnBasedMatch;
-import com.google.android.gms.games.multiplayer.turnbased.TurnBasedMatchConfig;
 import com.google.example.games.basegameutils.BaseGameUtils;
 
 import java.util.ArrayList;
@@ -23,7 +21,7 @@ import java.util.ArrayList;
 
 public class SecondActivity extends Activity
         implements GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener{
+        GoogleApiClient.OnConnectionFailedListener, OnInvitationReceivedListener{
     private static final String TAG = "SecondAct";
     private static final int RC_SIGN_IN = 9001;
     private static final int RQ_ROOM = 9002;
@@ -142,5 +140,16 @@ public class SecondActivity extends Activity
 
             mResolvingConnectionFailure = false;
         }
+    }
+
+    @Override
+    public void onInvitationReceived(Invitation invitation) {
+        Toast.makeText(this, "Invite: " + invitation.getInviter().getDisplayName(), Toast.LENGTH_SHORT).show();
+        Log.d(TAG, "Invite: " + invitation.getInviter().getDisplayName());
+    }
+
+    @Override
+    public void onInvitationRemoved(String s) {
+
     }
 }

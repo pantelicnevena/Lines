@@ -5,14 +5,14 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
+import android.widget.EditText;
+import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.games.Games;
-import com.google.android.gms.games.GamesStatusCodes;
 import com.google.android.gms.games.multiplayer.Invitation;
 import com.google.android.gms.games.multiplayer.OnInvitationReceivedListener;
 import com.google.android.gms.games.multiplayer.turnbased.OnTurnBasedMatchUpdateReceivedListener;
@@ -37,10 +37,14 @@ public class ThirdActivity extends Activity
     GameData gameData;
     TurnBasedMatch mMatch;
 
+    private boolean isDoingTurn;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_third);
+
+
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
@@ -54,6 +58,30 @@ public class ThirdActivity extends Activity
             public void onClick(View v) {
                 //TODO take turn
 
+            }
+        });
+
+        findViewById(R.id.send_btn).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sendBtnClick();
+            }
+        });
+    }
+
+    private void sendBtnClick() {
+        String nextParticipant = getNextParticipantId();
+        gameData.data = ((EditText)findViewById(R.id.data_edit)).getText().toString();
+        gameData.turnCounter = gameData.turnCounter + 1;
+
+        // TODO: show spinner
+
+        Games.TurnBasedMultiplayer
+                .takeTurn(mGoogleApiClient, mMatch.getMatchId(),
+                        gameData.persist(), nextParticipant).setResultCallback(new ResultCallback<TurnBasedMultiplayer.UpdateMatchResult>() {
+            @Override
+            public void onResult(TurnBasedMultiplayer.UpdateMatchResult updateMatchResult) {
+                processResult(updateMatchResult);
             }
         });
     }
@@ -135,7 +163,7 @@ public class ThirdActivity extends Activity
             Log.d(TAG, "status error: (" + status.getStatusCode() + ")" + status.getStatusMessage());
         }
         TurnBasedMatch match = result.getMatch();
-        // If this player is not the first player in this mMatch, continue.
+
         if (match.getData() == null) {
             initGame(match);
         }
@@ -151,21 +179,35 @@ public class ThirdActivity extends Activity
         String playerId = Games.Players.getCurrentPlayerId(mGoogleApiClient);
         String myParticipantId = mMatch.getParticipantId(playerId);
 
+        // TODO: prikazi spiner
         Games.TurnBasedMultiplayer.takeTurn(mGoogleApiClient, match.getMatchId(),
                 gameData.persist(), myParticipantId ).setResultCallback(new ResultCallback<TurnBasedMultiplayer.UpdateMatchResult>() {
             @Override
             public void onResult(TurnBasedMultiplayer.UpdateMatchResult updateMatchResult) {
                 Log.d(TAG, "treba update match!!!");
 
-                updateMatch(updateMatchResult);
+                processResult(updateMatchResult);
             }
         });
     }
 
     private void showTurnUI(TurnBasedMatch match) {
         byte[] data = match.getData();
+        if(data == null){
+            return;
+        }
+
         gameData = GameData.unpersist(data);
+        ((TextView)findViewById(R.id.data_text)).setText(gameData.data);
+
+        if(isDoingTurn){
+            findViewById(R.id.send_btn).setEnabled(true);
+        } else {
+            findViewById(R.id.send_btn).setEnabled(false);
+        }
+
         // adapter.notifyDataSetChanged();
+
     }
 
     @Override
@@ -180,14 +222,62 @@ public class ThirdActivity extends Activity
     @Override
     public void onTurnBasedMatchReceived(TurnBasedMatch turnBasedMatch) {
         Log.d(TAG, "tbm received: " + turnBasedMatch.getParticipantIds().get(0));
+        showTurnUI(turnBasedMatch);
     }
 
     @Override
     public void onTurnBasedMatchRemoved(String s) {
     }
 
-    public void updateMatch(TurnBasedMultiplayer.UpdateMatchResult result){
+    public void processResult(TurnBasedMultiplayer.UpdateMatchResult result){
+        TurnBasedMatch match = result.getMatch();
 
+        // TODO: skloni spiner
+
+        if(!result.getStatus().isSuccess()){
+            // TODO: hendluj kodove
+        }
+
+        isDoingTurn = (match.getTurnStatus() == TurnBasedMatch.MATCH_TURN_STATUS_MY_TURN);
+
+        showTurnUI(match);
+    }
+
+    /**
+     * Get the next participant. In this function, we assume that we are
+     * round-robin, with all known players going before all automatch players.
+     * This is not a requirement; players can go in any order. However, you can
+     * take turns in any order.
+     *
+     * @return participantId of next player, or null if automatching
+     */
+    public String getNextParticipantId() {
+
+        String playerId = Games.Players.getCurrentPlayerId(mGoogleApiClient);
+        String myParticipantId = mMatch.getParticipantId(playerId);
+
+        ArrayList<String> participantIds = mMatch.getParticipantIds();
+
+        int desiredIndex = -1;
+
+        for (int i = 0; i < participantIds.size(); i++) {
+            if (participantIds.get(i).equals(myParticipantId)) {
+                desiredIndex = i + 1;
+            }
+        }
+
+        if (desiredIndex < participantIds.size()) {
+            return participantIds.get(desiredIndex);
+        }
+
+        if (mMatch.getAvailableAutoMatchSlots() <= 0) {
+            // You've run out of automatch slots, so we start over.
+            return participantIds.get(0);
+        } else {
+            // You have not yet fully automatched, so null will find a new
+            // person to play against.
+            return null;
+        }
     }
 
 }
