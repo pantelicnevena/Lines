@@ -93,6 +93,7 @@ public class SecondActivity extends Activity
             if (match != null) {
                 Log.d(TAG, "match = null");
                 //TODO pravljenje poteza za mec iz inboxa
+                Toast.makeText(this, "vratili se iz inboxa", Toast.LENGTH_SHORT).show();
             }
         }
     }
