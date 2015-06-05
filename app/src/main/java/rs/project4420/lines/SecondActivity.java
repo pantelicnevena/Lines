@@ -74,7 +74,10 @@ public class SecondActivity extends Activity
         if(requestCode == RQ_ROOM){
             if(resultCode == Activity.RESULT_OK){
                 final ArrayList<String> invitees = data.getStringArrayListExtra(Games.EXTRA_PLAYER_IDS);
+
                 Intent intent = new Intent(this, ThirdActivity.class);
+                TurnBasedMatch match = data.getParcelableExtra(Multiplayer.EXTRA_TURN_BASED_MATCH);
+                intent.putExtra("match", match);
                 intent.putStringArrayListExtra("invitees", invitees);
                 startActivity(intent);
             }
@@ -93,6 +96,9 @@ public class SecondActivity extends Activity
             if (match != null) {
                 Log.d(TAG, "match = null");
                 //TODO pravljenje poteza za mec iz inboxa
+                Intent intent = new Intent(this, ThirdActivity.class);
+                intent.putExtra("match", match);
+                startActivity(intent);
                 Toast.makeText(this, "vratili se iz inboxa", Toast.LENGTH_SHORT).show();
             }
         }
@@ -152,5 +158,42 @@ public class SecondActivity extends Activity
     @Override
     public void onInvitationRemoved(String s) {
 
+    }
+
+    /**
+     * Get the next participant. In this function, we assume that we are
+     * round-robin, with all known players going before all automatch players.
+     * This is not a requirement; players can go in any order. However, you can
+     * take turns in any order.
+     *
+     * @return participantId of next player, or null if automatching
+     */
+    public String getNextParticipantId(TurnBasedMatch mMatch) {
+
+        String playerId = Games.Players.getCurrentPlayerId(mGoogleApiClient);
+        String myParticipantId = mMatch.getParticipantId(playerId);
+
+        ArrayList<String> participantIds = mMatch.getParticipantIds();
+
+        int desiredIndex = -1;
+
+        for (int i = 0; i < participantIds.size(); i++) {
+            if (participantIds.get(i).equals(myParticipantId)) {
+                desiredIndex = i + 1;
+            }
+        }
+
+        if (desiredIndex < participantIds.size()) {
+            return participantIds.get(desiredIndex);
+        }
+
+        if (mMatch.getAvailableAutoMatchSlots() <= 0) {
+            // You've run out of automatch slots, so we start over.
+            return participantIds.get(0);
+        } else {
+            // You have not yet fully automatched, so null will find a new
+            // person to play against.
+            return null;
+        }
     }
 }

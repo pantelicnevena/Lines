@@ -78,7 +78,14 @@ public class LoginActivity extends Activity
     @Override
     protected void onStart() {
         super.onStart();
-        mGoogleApiClient.connect();
+        if (mGoogleApiClient.isConnected()){
+            findViewById(R.id.sign_in_button).setVisibility(View.GONE);
+            findViewById(R.id.sign_out_button).setVisibility(View.VISIBLE);
+            findViewById(R.id.second_act).setVisibility(View.VISIBLE);
+        } else {
+            mGoogleApiClient.connect();
+            findViewById(R.id.second_act).setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -92,6 +99,7 @@ public class LoginActivity extends Activity
         Log.d(TAG, "connected");
         findViewById(R.id.sign_in_button).setVisibility(View.GONE);
         findViewById(R.id.sign_out_button).setVisibility(View.VISIBLE);
+        findViewById(R.id.second_act).setVisibility(View.VISIBLE);
     }
 
     @Override

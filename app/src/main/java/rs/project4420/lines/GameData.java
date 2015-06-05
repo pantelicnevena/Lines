@@ -1,5 +1,6 @@
 package rs.project4420.lines;
 
+import android.util.ArrayMap;
 import android.util.Log;
 
 import org.json.JSONException;
@@ -16,6 +17,7 @@ public class GameData {
     private static final String TAG = "GameData";
     public String data = "";
     public int turnCounter;
+
 
     public GameData() {
     }
