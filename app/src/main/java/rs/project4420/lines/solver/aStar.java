@@ -59,7 +59,7 @@ public class aStar {
 
             if (zatvorenaLista.get(zatvorenaLista.size()-1).getxTrenutno() == xCilj &&
                     zatvorenaLista.get(zatvorenaLista.size()-1).getyTrenutno() == yCilj) {
-                Log.d(TAG, "CIIIILJ");
+//                Log.d(TAG, "CIIIILJ");
                 kraj = true;
                 break;
             }
@@ -127,7 +127,7 @@ public class aStar {
             if (right.getKoraci() != -1) otvorenaLista.add(right);
 
 
-            Log.d(TAG, "Next: "+next+", gore: "+up+", dole: "+down+", levo: "+left+", desno: "+right );
+//            Log.d(TAG, "Next: "+next+", gore: "+up+", dole: "+down+", levo: "+left+", desno: "+right );
 
         };
 

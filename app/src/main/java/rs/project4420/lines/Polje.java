@@ -8,6 +8,7 @@ import android.widget.Button;
 public class Polje {
     int n;
     int m;
+    DotItem dot;
     Button b;
 
     public Polje() {
@@ -16,6 +17,8 @@ public class Polje {
     public Polje(int n, int m) {
         this.n = n;
         this.m = m;
+        dot = new DotItem();
+        dot.setColor(R.color.grey);
     }
 
     public int getN() {
@@ -32,6 +35,14 @@ public class Polje {
 
     public void setM(int m) {
         this.m = m;
+    }
+
+    public DotItem getDot() {
+        return dot;
+    }
+
+    public void setDot(DotItem dot) {
+        this.dot = dot;
     }
 
     @Override

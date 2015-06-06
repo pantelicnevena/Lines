@@ -13,6 +13,8 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Handler;
@@ -21,6 +23,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.ImageView;
@@ -61,6 +64,7 @@ public class DotsActivity extends ActionBarActivity implements AdapterView.OnIte
     List<MatrixItem> putanja;
     List<MatrixItem> put;
     List<ValueAnimator> listaVA;
+    Polje next;
 
     ValueAnimator animator;
     int lastSelected = -1;
@@ -114,12 +118,20 @@ public class DotsActivity extends ActionBarActivity implements AdapterView.OnIte
         gridView.setHorizontalSpacing(10);
         gridView.setVerticalSpacing(10);
 
+        //postavljanje sledece nove kuglice
+        next = nextDot(matrix);
+        View nextView = (View) findViewById(R.id.next_dot);
+        nextView.setBackgroundResource(R.drawable.next_dot);
+        GradientDrawable gd = (GradientDrawable) nextView.getBackground();
+        gd.setColor(getResources().getColor(next.getDot().getColor()));
+
+
         gridView.setOnItemClickListener(this);
     }
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        Log.d(TAG, "position:" + position);
+        //Log.d(TAG, "position:" + position);
 
         //stopiraj prethodnu
         if(animator != null && animator.isRunning()){
@@ -154,19 +166,24 @@ public class DotsActivity extends ActionBarActivity implements AdapterView.OnIte
                         tranzicija(matrix, position, putanja, gridView);
                         lastSelected = -1;
 
-                        //TODO provera 4 iste kuglice?
-                        //TODO provera 4 iste kuglice kada se pojavi nova
+                        View scroleBar = (View) findViewById(R.id.score_bar);
+                        TextView tv = (TextView)findViewById(R.id.score);
 
-                        matrix = LineSuccess.ponistiNizGore(xCilj, yCilj, matrix);
-                        matrix = LineSuccess.ponistiNizLevo(xCilj, yCilj, matrix);
-                        matrix = LineSuccess.ponistiNizDijagonalnoGlavna(xCilj, yCilj, matrix);
-                        matrix = LineSuccess.ponistiNizDijagonalnoSporedna(xCilj, yCilj, matrix);
+                        matrix = LineSuccess.ponistiNizove(xCilj, yCilj, matrix, tv, scroleBar);
+
 
                         Handler handler = new Handler();
                         handler.postDelayed(new Runnable() {
                             @Override
                             public void run() {
-                                vratiNoviDot(matrix);
+
+                                ubaciNoviDot(matrix, next);
+                                next = nextDot(matrix);
+                                View nextView = (View) findViewById(R.id.next_dot);
+                                nextView.setBackgroundResource(R.drawable.next_dot);
+                                GradientDrawable gd = (GradientDrawable) nextView.getBackground();
+                                gd.setColor(getResources().getColor(next.getDot().getColor()));
+
                                 adapter.notifyDataSetChanged();
                             }
                         }, 370);
@@ -205,32 +222,61 @@ public class DotsActivity extends ActionBarActivity implements AdapterView.OnIte
         }
     }
 
-    private DotItem[][] vratiNoviDot(final DotItem[][] m) {
+    /**
+     *
+     * @param m matrica trenutnog stanja
+     * @return polje sa koordinatama x i y i bojom
+     * koje treba da se postavi nakon odgranog poteza
+     */
+    private Polje nextDot(final DotItem[][] m) {
+        rnd = new Random();
+
+        int boja = colors.get(rnd.nextInt(7));
+        DotItem dot = new DotItem();
+        dot.setColor(boja);
+
+        Polje p = new Polje();
+        p.setDot(dot);
+
+        return p;
+    }
+
+    /**
+     *
+     * @param m matrica trenutnog stanja
+     * @param polje polje na kome ce se pojaviti sledeca kuglica
+     * @return trenutno stanje matrice nakon ubacenog novog polja
+     * i nakon povere da li postoji neko ponistavanje kuglica [osvojeni poeni]
+     */
+    private DotItem[][] ubaciNoviDot(final DotItem[][] m, final Polje polje) {
         rnd = new Random();
         List<Polje> praznaPolja = vratiListuPraznihPolja(m);
-
         int praznoPolje = rnd.nextInt(praznaPolja.size());
-        int boja = colors.get(rnd.nextInt(7));
+        final Polje p = polje;
+        p.setN(praznaPolja.get(praznoPolje).getN());
+        p.setM(praznaPolja.get(praznoPolje).getM());
 
-        final Polje p = praznaPolja.get(praznoPolje);
-        matrix[p.getN()][p.getM()].setColor(boja);
+        matrix[p.getN()][p.getM()].setColor(p.getDot().getColor());
         Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                matrix = LineSuccess.ponistiNizGore(p.getN(), p.getM(), matrix);
-                matrix = LineSuccess.ponistiNizLevo(p.getN(),p.getM(), matrix);
-                matrix = LineSuccess.ponistiNizDijagonalnoGlavna(p.getN(), p.getM(), matrix);
-                matrix = LineSuccess.ponistiNizDijagonalnoSporedna(p.getN(), p.getM(), matrix);
+                View scroleBar = (View) findViewById(R.id.score_bar);
+                TextView tv = (TextView)findViewById(R.id.score);
+
+                matrix = LineSuccess.ponistiNizove(p.getN(), p.getM(), matrix, tv, scroleBar);
+
                 adapter.notifyDataSetChanged();
             }
         }, 300);
 
-        Log.d(TAG, "Pozicija:" + p.getN() + "" + p.getM() + ", boja: " + matrix[p.getN()][p.getM()].getColor());
+//        Log.d(TAG, "Pozicija:" + p.getN() + "" + p.getM() + ", boja: " + matrix[p.getN()][p.getM()].getColor());
         findViewById(R.id.next_dot);
 
         return matrix;
     }
+
+
 
     public int[][] napraviKopiju (DotItem[][] matrix){
         int[][] kopija = new int[6][6];
@@ -264,7 +310,7 @@ public class DotsActivity extends ActionBarActivity implements AdapterView.OnIte
             for (int k = 0; k < 6; k++) {
                 lista.add(kopija[j][k]);
             }
-            Log.d(TAG, j + ": " + lista);
+//            Log.d(TAG, j + ": " + lista);
         }
     };
 
@@ -274,7 +320,7 @@ public class DotsActivity extends ActionBarActivity implements AdapterView.OnIte
             for (int k = 0; k < 6; k++) {
                 lista.add(kopija[j][k].getValue());
             }
-            Log.d(TAG, j + ": " + lista);
+//            Log.d(TAG, j + ": " + lista);
         }
     };
 
@@ -290,7 +336,7 @@ public class DotsActivity extends ActionBarActivity implements AdapterView.OnIte
                 if (matrix[i][j].getColor() == R.color.grey) praznaPolja.add(new Polje(i,j));
             }
         }
-        Log.d(TAG, "Lista praznih polja: "+praznaPolja);
+//        Log.d(TAG, "Lista praznih polja: "+praznaPolja);
         return praznaPolja;
     };
 

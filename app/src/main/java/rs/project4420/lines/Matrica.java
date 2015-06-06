@@ -43,7 +43,7 @@ public class Matrica {
             for (int k = 0; k < 6; k++) {
                 lista.add(polja[j][k]);
             }
-            Log.d(TAG, j + ": " + lista);
+//            Log.d(TAG, j + ": " + lista);
         }
     }
 
@@ -53,7 +53,7 @@ public class Matrica {
             for (int k = 0; k < 6; k++) {
                 lista.add(matrica[j][k]);
             }
-            Log.d(TAG, j + ": " + lista);
+//            Log.d(TAG, j + ": " + lista);
         }
     }
 
