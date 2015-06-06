@@ -29,7 +29,7 @@ import com.google.example.games.basegameutils.BaseGameUtils;
 
 public class LoginActivity extends Activity
         implements GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener{
+        GoogleApiClient.OnConnectionFailedListener, OnTurnBasedMatchUpdateReceivedListener, OnInvitationReceivedListener{
 
     private static final String TAG = "LoginAct";
     private static int RC_SIGN_IN = 9001;
@@ -140,6 +140,27 @@ public class LoginActivity extends Activity
                 BaseGameUtils.showActivityResultError(this, request, response, R.string.signin_other_error);
             }
         }
+    }
+
+    @Override
+    public void onTurnBasedMatchReceived(TurnBasedMatch turnBasedMatch) {
+        Log.d(TAG, "tbm received: " + turnBasedMatch.getParticipantIds().get(0));
+
+    }
+
+    @Override
+    public void onTurnBasedMatchRemoved(String s) {
+
+    }
+
+    @Override
+    public void onInvitationReceived(Invitation invitation) {
+        Log.d(TAG, "recived from: " + invitation.getInviter().getDisplayName());
+    }
+
+    @Override
+    public void onInvitationRemoved(String s) {
+
     }
 
     /*

@@ -14,6 +14,7 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
+import com.google.android.gms.games.Game;
 import com.google.android.gms.games.Games;
 import com.google.android.gms.games.multiplayer.Invitation;
 import com.google.android.gms.games.multiplayer.Multiplayer;
@@ -31,8 +32,8 @@ import javax.xml.transform.Result;
 
 public class ThirdActivity extends Activity
         implements GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener, ResultCallback<TurnBasedMultiplayer.InitiateMatchResult>,
-        OnInvitationReceivedListener, OnTurnBasedMatchUpdateReceivedListener {
+        GoogleApiClient.OnConnectionFailedListener,
+        OnInvitationReceivedListener, OnTurnBasedMatchUpdateReceivedListener, ResultCallback<TurnBasedMultiplayer.InitiateMatchResult> {
 
     private static final String TAG = "ThirdAct";
     private static final int RC_SIGN_IN = 9001;
@@ -57,7 +58,17 @@ public class ThirdActivity extends Activity
                 .addScope(Games.SCOPE_GAMES)
                 .build();
 
+
         mMatch = (TurnBasedMatch) getIntent().getExtras().get("match");
+
+        if (mMatch != null){
+            gameData =  new GameData();
+            gameData = GameData.unpersist(mMatch.getData());
+            Log.d(TAG, "Data: "+gameData.data+ ", turn: "+ gameData.turnCounter);
+            Toast.makeText(this, gameData.data, Toast.LENGTH_SHORT).show();
+        }
+
+
 
         invitees = getIntent().getStringArrayListExtra("invitees");
 //        Log.d(TAG, invitees.toString());
@@ -81,13 +92,16 @@ public class ThirdActivity extends Activity
 
     private void sendBtnClick() {
         String nextParticipant = getNextParticipantId();
-        gameData = new GameData();
+        if (gameData == null){
+            gameData = new GameData();
+        }
+
         gameData.data = ((EditText)findViewById(R.id.data_edit)).getText().toString();
         gameData.turnCounter = gameData.turnCounter + 1;
 
         // TODO: show spinner
 
-
+        Log.d(TAG, "Next participant: "+nextParticipant);
         Games.TurnBasedMultiplayer
                 .takeTurn(mGoogleApiClient, mMatch.getMatchId(),
                         gameData.persist(), nextParticipant).setResultCallback(new ResultCallback<TurnBasedMultiplayer.UpdateMatchResult>() {
@@ -120,12 +134,18 @@ public class ThirdActivity extends Activity
     @Override
     public void onConnected(Bundle bundle) {
         Log.d(TAG, "connected");
-        if (invitees == null) { return; }
+        if (invitees == null) {
+            Games.Invitations.registerInvitationListener(mGoogleApiClient, this);
+            Games.TurnBasedMultiplayer.registerMatchUpdateListener(mGoogleApiClient, this);
+            return; }
+
 
         TurnBasedMatchConfig tbmc = TurnBasedMatchConfig.builder()
                 .addInvitedPlayers(invitees)
                 .setAutoMatchCriteria(null)
                 .build();
+
+
 
         // Create and start the mMatch.
         Games.TurnBasedMultiplayer
@@ -170,21 +190,7 @@ public class ThirdActivity extends Activity
         }
     }
 
-    @Override
-    public void onResult(TurnBasedMultiplayer.InitiateMatchResult result) {
-        Status status = result.getStatus();
-        if(!status.isSuccess()){
-            Log.d(TAG, "status error: (" + status.getStatusCode() + ")" + status.getStatusMessage());
-        }
-        TurnBasedMatch match = result.getMatch();
 
-
-        if (match.getData() == null) {
-            initGame(match);
-        }
-        // Let the player take the first turn
-        showTurnUI(match);
-    }
 
 
 
@@ -205,7 +211,6 @@ public class ThirdActivity extends Activity
             @Override
             public void onResult(TurnBasedMultiplayer.UpdateMatchResult updateMatchResult) {
                 //Log.d(TAG, "treba update match!!!");
-
                 processResult(updateMatchResult);
             }
         });
@@ -241,6 +246,7 @@ public class ThirdActivity extends Activity
 
     @Override
     public void onTurnBasedMatchReceived(TurnBasedMatch turnBasedMatch) {
+        if (turnBasedMatch == null) { return; }
         Log.d(TAG, "tbm received: " + turnBasedMatch.getParticipantIds().get(0));
         byte[] data = turnBasedMatch.getData();
         gameData = GameData.unpersist(data);
@@ -254,18 +260,19 @@ public class ThirdActivity extends Activity
     }
 
     public void processResult(TurnBasedMultiplayer.UpdateMatchResult result){
-        TurnBasedMatch match = result.getMatch();
-
+        mMatch = result.getMatch();
+        String playerId = Games.Players.getCurrentPlayerId(mGoogleApiClient);
+        Log.d(TAG, "My id: " + mMatch.getParticipantId(playerId));
         // TODO: skloni spiner
 
         if(!result.getStatus().isSuccess()){
             // TODO: hendluj kodove
         }
 
-        isDoingTurn = (match.getTurnStatus() == TurnBasedMatch.MATCH_TURN_STATUS_MY_TURN);
+        isDoingTurn = (mMatch.getTurnStatus() == TurnBasedMatch.MATCH_TURN_STATUS_MY_TURN);
         Log.d(TAG, "IS DOING TURN: "+isDoingTurn);
 
-        showTurnUI(match);
+        showTurnUI(mMatch);
     }
 
     /**
@@ -305,4 +312,17 @@ public class ThirdActivity extends Activity
         }
     }
 
+    @Override
+    public void onResult(TurnBasedMultiplayer.InitiateMatchResult result) {
+        Status status = result.getStatus();
+        if(!status.isSuccess()){
+            Log.d(TAG, "status error: (" + status.getStatusCode() + ")" + status.getStatusMessage());
+        }
+        TurnBasedMatch match = result.getMatch();
+        if (match.getData() == null) {
+            initGame(match);
+        }
+        // Let the player take the first turn
+        showTurnUI(match);
+    }
 }
