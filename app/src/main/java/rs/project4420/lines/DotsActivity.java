@@ -49,6 +49,7 @@ import rs.project4420.lines.solver.aStar;
 public class DotsActivity extends ActionBarActivity implements AdapterView.OnItemClickListener, GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener {
 
+    //TODO 144, 153, 154, 158, 162, 163, 164, 282, 283, 284, 295, 296, 297, 308, 310, 319, 320, 334, 335, 352, 353, 372; activity dots: columns: 7
     private static final String TAG = "DotsActivity";
     Adapter adapter;
     Random rnd;
@@ -57,7 +58,7 @@ public class DotsActivity extends ActionBarActivity implements AdapterView.OnIte
 
     List<Integer> colors;
 
-    DotItem[][] matrix = new DotItem[6][6];
+    DotItem[][] matrix = new DotItem[7][7];
     int[][] matrixCopy;
     MatrixItem[][] matrixCopyItem;
     boolean pronadjenCilj;
@@ -102,13 +103,13 @@ public class DotsActivity extends ActionBarActivity implements AdapterView.OnIte
         colors.add(R.color.green);
         colors.add(R.color.grey);
 
-        for (int i = 0; i < 6; i++) {
-            for (int j = 0; j < 6; j++) {
+        for (int i = 0; i < 7; i++) {
+            for (int j = 0; j < 7; j++) {
                 matrix[i][j] = new DotItem(R.color.grey);
             }
         }
         for (int i = 0; i < 15; i++) {
-            matrix[rnd.nextInt(6)][rnd.nextInt(6)].setColor(colors.get(rnd.nextInt(7)));
+            matrix[rnd.nextInt(7)][rnd.nextInt(7)].setColor(colors.get(rnd.nextInt(7)));
         }
         //TODO ne sme da dodje do ponavljanja pozicija na koja se ubacuju obojena polja
 
@@ -141,7 +142,7 @@ public class DotsActivity extends ActionBarActivity implements AdapterView.OnIte
         }
         //kliknuto drugo obojeno polje
         if(lastSelected != position){
-            if (matrix[position/6][position%6].getColor() == R.color.grey){
+            if (matrix[position/7][position%7].getColor() == R.color.grey){
                 //ako prethodno nije kliknuto na obojeno dugme
                 if (lastSelected == -1) {
                     Vibrator vibe = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
@@ -151,17 +152,17 @@ public class DotsActivity extends ActionBarActivity implements AdapterView.OnIte
                     matrixCopy = napraviKopiju(matrix);
                     matrixCopyItem = napraviKopijuPolja(matrix);
                     List<MatrixItem> putanja = new ArrayList<>();
-                    int xCilj = position/6;
-                    int yCilj = position%6;
+                    int xCilj = position/7;
+                    int yCilj = position%7;
 
                     aStar astar = new aStar();
-                    putanja = astar.aZvezda(matrixCopyItem, (lastSelected / 6), (lastSelected % 6), (xCilj), (yCilj));
+                    putanja = astar.aZvezda(matrixCopyItem, (lastSelected / 7), (lastSelected % 7), (xCilj), (yCilj));
 
                     if (putanja != null) {
                         final List<MatrixItem> finalPutanja = putanja;
-                        int lastColor = matrix[lastSelected / 6][lastSelected % 6].getColor();
-                        matrix[lastSelected / 6][lastSelected % 6].setColor(R.color.grey);
-                        matrix[position / 6][position % 6].setColor(lastColor);
+                        int lastColor = matrix[lastSelected / 7][lastSelected % 7].getColor();
+                        matrix[lastSelected / 7][lastSelected % 7].setColor(R.color.grey);
+                        matrix[position / 7][position % 7].setColor(lastColor);
 
                         tranzicija(matrix, position, putanja, gridView);
                         lastSelected = -1;
@@ -279,9 +280,9 @@ public class DotsActivity extends ActionBarActivity implements AdapterView.OnIte
 
 
     public int[][] napraviKopiju (DotItem[][] matrix){
-        int[][] kopija = new int[6][6];
-        for (int i = 0; i < 6; i++) {
-            for (int j = 0; j < 6; j++) {
+        int[][] kopija = new int[7][7];
+        for (int i = 0; i < 7; i++) {
+            for (int j = 0; j < 7; j++) {
                 if (matrix[i][j].getColor() == R.color.grey)
                     kopija[i][j] = 0;
                 else kopija[i][j] = 1;
@@ -292,9 +293,9 @@ public class DotsActivity extends ActionBarActivity implements AdapterView.OnIte
     };
 
     public MatrixItem[][] napraviKopijuPolja (DotItem[][] matrix){
-        MatrixItem[][] kopija = new MatrixItem[6][6];
-        for (int i = 0; i < 6; i++) {
-            for (int j = 0; j < 6; j++) {
+        MatrixItem[][] kopija = new MatrixItem[7][7];
+        for (int i = 0; i < 7; i++) {
+            for (int j = 0; j < 7; j++) {
                 if (matrix[i][j].getColor() == R.color.grey)
                     kopija[i][j] = new MatrixItem(i, j, 0);
                 else kopija[i][j] = new MatrixItem(i, j, -1);
@@ -305,9 +306,9 @@ public class DotsActivity extends ActionBarActivity implements AdapterView.OnIte
     };
 
     public void stampajKopiju(int[][] kopija){
-        for (int j = 0; j < 6; j++) {
+        for (int j = 0; j < 7; j++) {
             List lista = new ArrayList();
-            for (int k = 0; k < 6; k++) {
+            for (int k = 0; k < 7; k++) {
                 lista.add(kopija[j][k]);
             }
 //            Log.d(TAG, j + ": " + lista);
@@ -315,9 +316,9 @@ public class DotsActivity extends ActionBarActivity implements AdapterView.OnIte
     };
 
     public void stampajKopijuPolja(MatrixItem[][] kopija){
-        for (int j = 0; j < 6; j++) {
+        for (int j = 0; j < 7; j++) {
             List lista = new ArrayList();
-            for (int k = 0; k < 6; k++) {
+            for (int k = 0; k < 7; k++) {
                 lista.add(kopija[j][k].getValue());
             }
 //            Log.d(TAG, j + ": " + lista);
@@ -331,8 +332,8 @@ public class DotsActivity extends ActionBarActivity implements AdapterView.OnIte
      */
     public List<Polje> vratiListuPraznihPolja(DotItem[][] matrix){
         List<Polje> praznaPolja = new ArrayList<>();
-        for (int i = 0; i < 6; i++) {
-            for (int j = 0; j < 6; j++) {
+        for (int i = 0; i < 7; i++) {
+            for (int j = 0; j < 7; j++) {
                 if (matrix[i][j].getColor() == R.color.grey) praznaPolja.add(new Polje(i,j));
             }
         }
@@ -349,8 +350,8 @@ public class DotsActivity extends ActionBarActivity implements AdapterView.OnIte
             animList.add(va);
             va.setDuration(300);
             va.setRepeatCount(2);
-            final DotView tackica = (DotView) gv.getChildAt(put.get(i).getxTrenutno()*6+put.get(i).getyTrenutno());
-            final int color = matrix[position/6][position%6].getColor();
+            final DotView tackica = (DotView) gv.getChildAt(put.get(i).getxTrenutno()*7+put.get(i).getyTrenutno());
+            final int color = matrix[position/7][position%7].getColor();
             va.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
                 @Override
                 public void onAnimationUpdate(ValueAnimator animation) {
@@ -370,7 +371,7 @@ public class DotsActivity extends ActionBarActivity implements AdapterView.OnIte
                 @Override
                 public void run() {
                     for (int i = 0; i < finalPutanja1.size() ; i++) {
-                        DotView tackica = (DotView) gridView.getChildAt(finalPutanja1.get(i).getxTrenutno()*6+ finalPutanja1.get(i).getyTrenutno());
+                        DotView tackica = (DotView) gridView.getChildAt(finalPutanja1.get(i).getxTrenutno()*7+ finalPutanja1.get(i).getyTrenutno());
                         animList.get(i).end();
                         tackica.clearAnimation();
                         tackica.setColor(R.color.grey);

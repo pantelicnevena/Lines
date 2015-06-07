@@ -165,7 +165,7 @@ public class aStar {
 
     public MatrixItem vratiGore (MatrixItem[][] kopija, int n, int m, int xCilj, int yCilj){
         MatrixItem gore = new MatrixItem();
-        if (n-1>=0 && n-1<=5 && m>=0 && m<=5 && kopija[n-1][m].getValue() != -1) {
+        if (n-1>=0 && n-1<=6 && m>=0 && m<=6 && kopija[n-1][m].getValue() != -1) {
             gore = kopija[n-1][m];
             int man = Math.abs(n-1 - xCilj) + Math.abs(m - yCilj);
             gore.setKoraci(kopija[n][m].getPomeraj()+1+man);
@@ -178,7 +178,7 @@ public class aStar {
 
     public MatrixItem vratiDole (MatrixItem[][] kopija, int n, int m, int xCilj, int yCilj){
         MatrixItem dole = new MatrixItem();
-        if (n+1>=0 && n+1<=5 && m>=0 && m<=5 && kopija[n+1][m].getValue() != -1) {
+        if (n+1>=0 && n+1<=6 && m>=0 && m<=6 && kopija[n+1][m].getValue() != -1) {
             dole = kopija[n+1][m];
             int man = Math.abs(n+1 - xCilj) + Math.abs(m - yCilj);
             dole.setKoraci(kopija[n][m].getPomeraj()+1+man);
@@ -191,7 +191,7 @@ public class aStar {
 
     public MatrixItem vratiLevo (MatrixItem[][] kopija, int n, int m, int xCilj, int yCilj){
         MatrixItem levo = new MatrixItem();
-        if (n>=0 && n<=5 && m-1>=0 && m-1<=5 && kopija[n][m-1].getValue() != -1) {
+        if (n>=0 && n<=6 && m-1>=0 && m-1<=6 && kopija[n][m-1].getValue() != -1) {
             levo = kopija[n][m-1];
             int man = Math.abs(n - xCilj) + Math.abs(m-1 - yCilj);
             levo.setKoraci(kopija[n][m].getPomeraj()+1+man);
@@ -204,7 +204,7 @@ public class aStar {
 
     public MatrixItem vratiDesno (MatrixItem[][] kopija, int n, int m, int xCilj, int yCilj){
         MatrixItem desno = new MatrixItem();
-        if (n>=0 && n<=5 && m+1>=0 && m+1<=5 && kopija[n][m+1].getValue() != -1) {
+        if (n>=0 && n<=6 && m+1>=0 && m+1<=6 && kopija[n][m+1].getValue() != -1) {
             desno =kopija[n][m+1];
             int man = Math.abs(n - xCilj) + Math.abs(m+1 - yCilj);
             desno.setKoraci(kopija[n][m].getPomeraj()+1+man);

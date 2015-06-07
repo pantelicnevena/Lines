@@ -26,17 +26,17 @@ public class Adapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        return 36;
+        return 49;
     }
 
     @Override
     public Object getItem(int position) {
-        return mItems[position/6][position%6];
+        return mItems[position/7][position%7];
     }
 
     @Override
     public long getItemId(int position) {
-        return 0;//mItems[position/6][position%6].getId();
+        return 0;
     }
 
     @Override
@@ -44,7 +44,7 @@ public class Adapter extends BaseAdapter {
         if (convertView == null) {
             convertView = LayoutInflater.from(mContext).inflate(R.layout.dot_item, parent, false);
         }
-        ((DotView)convertView).setColor(mItems[position/6][position%6].getColor());
+        ((DotView)convertView).setColor(mItems[position/7][position%7].getColor());
         return convertView;
     }
 

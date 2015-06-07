@@ -2,27 +2,17 @@ package rs.project4420.lines;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.PendingResult;
-import com.google.android.gms.common.api.ResultCallback;
-import com.google.android.gms.drive.Drive;
 import com.google.android.gms.games.Games;
-import com.google.android.gms.games.GamesStatusCodes;
 import com.google.android.gms.games.multiplayer.Invitation;
 import com.google.android.gms.games.multiplayer.OnInvitationReceivedListener;
 import com.google.android.gms.games.multiplayer.turnbased.OnTurnBasedMatchUpdateReceivedListener;
 import com.google.android.gms.games.multiplayer.turnbased.TurnBasedMatch;
-import com.google.android.gms.games.multiplayer.turnbased.TurnBasedMultiplayer;
-import com.google.android.gms.plus.model.people.Person;
 import com.google.example.games.basegameutils.BaseGameUtils;
 
 
@@ -163,25 +153,6 @@ public class LoginActivity extends Activity
 
     }
 
-    /*
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_login, menu);
-        return true;
-    }
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-        return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-    */
 
-    }
+
+}

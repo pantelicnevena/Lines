@@ -67,7 +67,7 @@ public class LineSuccess {
 
             while (kuglice.size()<=5){
 //                Log.d(TAG, "Gore: " + xGore + "" + yGore + ", dole: " + xDole + "" + yDole);
-                if (xGore<=5 && matrix[xCilj][yCilj].getColor() == matrix[xGore][yGore].getColor()){
+                if (xGore<=6 && matrix[xCilj][yCilj].getColor() == matrix[xGore][yGore].getColor()){
                     kuglice.add(new Polje(xGore, yGore));
 //                    Log.d(TAG, "Gore: "+xGore+""+yGore);
                     xGore++;
@@ -104,7 +104,7 @@ public class LineSuccess {
             while (kuglice.size()<=5){
 //                Log.d(TAG, "Kuglice: "+kuglice);
 //                Log.d(TAG, "Desno: "+xDesno+""+yDesno+", levo: "+xLevo+""+yLevo);
-                if (yDesno<=5 && matrix[xCilj][yCilj].getColor() == matrix[xDesno][yDesno].getColor()){
+                if (yDesno<=6 && matrix[xCilj][yCilj].getColor() == matrix[xDesno][yDesno].getColor()){
                     kuglice.add(new Polje(xDesno, yDesno));
 //                    Log.d(TAG, "Desno!");
                     yDesno++;
@@ -141,13 +141,13 @@ public class LineSuccess {
             while (kuglice.size()<=5){
 //                Log.d(TAG, "Kuglice: "+kuglice);
 //                Log.d(TAG, "Desno: "+xGoreDesno+""+yGoreDesno+", levo: "+xDoleLevo+""+yDoleLevo);
-                if (yGoreDesno<=5 && xGoreDesno >=0 && matrix[xCilj][yCilj].getColor() == matrix[xGoreDesno][yGoreDesno].getColor()){
+                if (yGoreDesno<=6 && xGoreDesno >=0 && matrix[xCilj][yCilj].getColor() == matrix[xGoreDesno][yGoreDesno].getColor()){
                     kuglice.add(new Polje(xGoreDesno, yGoreDesno));
 //                    Log.d(TAG, "Desno!");
                     xGoreDesno--;
                     yGoreDesno++;
                 } else {
-                    if (yDoleLevo >=0 && xDoleLevo <=5 && matrix[xCilj][yCilj].getColor() == matrix[xDoleLevo][yDoleLevo].getColor()) {
+                    if (yDoleLevo >=0 && xDoleLevo <=6 && matrix[xCilj][yCilj].getColor() == matrix[xDoleLevo][yDoleLevo].getColor()) {
                         kuglice.add(new Polje(xDoleLevo, yDoleLevo));
                         xDoleLevo++;
                         yDoleLevo--;
@@ -181,7 +181,7 @@ public class LineSuccess {
             while (kuglice.size()<=5){
 //                Log.d(TAG, "Kuglice: "+kuglice);
 //                Log.d(TAG, "Desno: "+xDoleDesno+""+yDoleDesno+", levo: "+xGoreLevo+""+yGoreLevo);
-                if (xDoleDesno<=5 && yDoleDesno <=5 && matrix[xCilj][yCilj].getColor() == matrix[xDoleDesno][yDoleDesno].getColor()){
+                if (xDoleDesno<=6 && yDoleDesno <=6 && matrix[xCilj][yCilj].getColor() == matrix[xDoleDesno][yDoleDesno].getColor()){
                     kuglice.add(new Polje(xDoleDesno, yDoleDesno));
 //                    Log.d(TAG, "Desno!");
                     xDoleDesno++;
