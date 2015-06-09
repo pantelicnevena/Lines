@@ -1,4 +1,4 @@
-package rs.project4420.lines;
+package rs.project4420.lines.view;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -17,6 +17,8 @@ import com.google.android.gms.games.multiplayer.turnbased.TurnBasedMatch;
 import com.google.example.games.basegameutils.BaseGameUtils;
 
 import java.util.ArrayList;
+
+import rs.project4420.lines.R;
 
 
 public class SecondActivity extends Activity
@@ -99,7 +101,6 @@ public class SecondActivity extends Activity
                 Intent intent = new Intent(this, ThirdActivity.class);
                 intent.putExtra("match", match);
                 startActivity(intent);
-                Toast.makeText(this, "vratili se iz inboxa", Toast.LENGTH_SHORT).show();
             }
         }
     }

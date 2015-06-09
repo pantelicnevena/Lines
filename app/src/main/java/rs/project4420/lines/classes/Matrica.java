@@ -1,11 +1,12 @@
-package rs.project4420.lines;
+package rs.project4420.lines.classes;
 
-import android.util.Log;
 import android.widget.Button;
 import android.widget.GridView;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import rs.project4420.lines.classes.Polje;
 
 /**
  * Created by nevena on 18.4.15..

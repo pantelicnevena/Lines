@@ -1,21 +1,9 @@
-package rs.project4420.lines;
+package rs.project4420.lines.view;
 
 import android.animation.ValueAnimator;
-import android.app.ListActivity;
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.BitmapShader;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.PorterDuff;
-import android.graphics.PorterDuffXfermode;
-import android.graphics.Rect;
-import android.graphics.RectF;
-import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Vibrator;
@@ -23,7 +11,6 @@ import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.ImageView;
@@ -32,24 +19,25 @@ import android.widget.TextView;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.games.Games;
-import com.google.android.gms.games.Player;
 
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import java.util.*;
 
+import rs.project4420.lines.Adapter;
+import rs.project4420.lines.R;
+import rs.project4420.lines.classes.DotItem;
+import rs.project4420.lines.classes.DotView;
+import rs.project4420.lines.classes.MatrixItem;
+import rs.project4420.lines.classes.Polje;
+import rs.project4420.lines.logic.DownloadImageTask;
+import rs.project4420.lines.logic.LineSuccess;
 import rs.project4420.lines.solver.aStar;
 
 
 public class DotsActivity extends ActionBarActivity implements AdapterView.OnItemClickListener, GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener {
 
-    //TODO 144, 153, 154, 158, 162, 163, 164, 282, 283, 284, 295, 296, 297, 308, 310, 319, 320, 334, 335, 352, 353, 372; activity dots: columns: 7
     private static final String TAG = "DotsActivity";
     Adapter adapter;
     Random rnd;

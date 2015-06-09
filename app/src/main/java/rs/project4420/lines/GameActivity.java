@@ -15,6 +15,9 @@ import com.google.android.gms.games.multiplayer.turnbased.TurnBasedMatch;
 
 import java.util.ArrayList;
 
+import rs.project4420.lines.R;
+import rs.project4420.lines.view.DotsActivity;
+
 
 public class GameActivity extends Activity {
 

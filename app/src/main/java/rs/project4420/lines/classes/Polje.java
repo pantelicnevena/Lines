@@ -1,6 +1,8 @@
-package rs.project4420.lines;
+package rs.project4420.lines.classes;
 
 import android.widget.Button;
+
+import rs.project4420.lines.R;
 
 /**
  * Created by nevena on 14.4.15..

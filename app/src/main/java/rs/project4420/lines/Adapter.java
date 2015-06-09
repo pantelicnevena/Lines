@@ -1,14 +1,14 @@
 package rs.project4420.lines;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
 
-import java.util.List;
+import rs.project4420.lines.classes.DotItem;
+import rs.project4420.lines.classes.DotView;
 
 /**
  * Created by nevena on 19.4.15..

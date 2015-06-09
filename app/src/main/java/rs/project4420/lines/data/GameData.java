@@ -1,25 +1,28 @@
-package rs.project4420.lines;
+package rs.project4420.lines.data;
 
-/**
- * Created by nevena on 27.3.15..
- */
-
-import java.io.UnsupportedEncodingException;
-import java.nio.charset.Charset;
+import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.util.Log;
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 
-public class LinesTurn {
+/**
+ * Created by enco on 1.6.15..
+ */
+public class GameData {
 
-    public static final String TAG = "LinesTurn";
-
+    private static final String TAG = "GameData";
     public String data = "";
     public int turnCounter;
 
-    public LinesTurn() {
+
+    public GameData() {
+    }
+
+    public GameData(byte[] data) {
+
     }
 
     // This is the byte array we will write out to the TBMP API.
@@ -42,12 +45,12 @@ public class LinesTurn {
         return st.getBytes(Charset.forName("UTF-8"));
     }
 
-    // Creates a new instance of LinesTurn.
-    static public LinesTurn unpersist(byte[] byteArray) {
+    // Creates a new instance of GameData.
+    static public GameData unpersist(byte[] byteArray) {
 
         if (byteArray == null) {
             Log.d(TAG, "Empty array---possible bug.");
-            return new LinesTurn();
+            return new GameData();
         }
 
         String st = null;
@@ -60,7 +63,7 @@ public class LinesTurn {
 
         Log.d(TAG, "====UNPERSIST \n" + st);
 
-        LinesTurn retVal = new LinesTurn();
+        GameData retVal = new GameData();
 
         try {
             JSONObject obj = new JSONObject(st);

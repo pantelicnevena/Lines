@@ -5,7 +5,7 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingBottom="@dimen/activity_vertical_margin"
     android:orientation="vertical"
-    tools:context="rs.project4420.lines.SecondActivity">
+    tools:context="rs.project4420.lines.view.SecondActivity">
 
     <Button
         android:id="@+id/get_room_btn"

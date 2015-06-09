@@ -1,4 +1,4 @@
-package rs.project4420.lines;
+package rs.project4420.lines.classes;
 
 /**
  * Created by nevena on 19.4.15..

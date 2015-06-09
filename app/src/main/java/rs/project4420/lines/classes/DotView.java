@@ -1,4 +1,4 @@
-package rs.project4420.lines;
+package rs.project4420.lines.classes;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -17,7 +17,7 @@ public class DotView extends View {
 
     private static final String TAG = "DotView";
     Paint paint;
-    float radius;
+    public float radius;
     private float cx;
     private float cy;
 

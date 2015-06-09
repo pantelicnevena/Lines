@@ -1,4 +1,4 @@
-package rs.project4420.lines;
+package rs.project4420.lines.view;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -15,6 +15,8 @@ import com.google.android.gms.games.multiplayer.turnbased.OnTurnBasedMatchUpdate
 import com.google.android.gms.games.multiplayer.turnbased.TurnBasedMatch;
 import com.google.example.games.basegameutils.BaseGameUtils;
 
+import rs.project4420.lines.R;
+import rs.project4420.lines.view.SecondActivity;
 
 
 public class LoginActivity extends Activity

@@ -1,11 +1,9 @@
 package rs.project4420.lines.solver;
 
-import android.util.Log;
-
 import java.util.ArrayList;
 import java.util.List;
 
-import rs.project4420.lines.MatrixItem;
+import rs.project4420.lines.classes.MatrixItem;
 
 /**
  * Created by nevena on 23.4.15..

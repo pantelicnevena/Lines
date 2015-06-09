@@ -3,13 +3,7 @@
     android:id="@+id/frame_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-<!--
-    <rs.project4420.lines.DotView
-        android:id="@+id/button"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:scaleType="centerCrop"
-        android:background="@drawable/button_background"/>-->
+
     <Button
         android:id="@+id/item"
         android:layout_width="match_parent"

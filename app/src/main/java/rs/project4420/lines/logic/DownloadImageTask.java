@@ -1,4 +1,4 @@
-package rs.project4420.lines;
+package rs.project4420.lines.logic;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
