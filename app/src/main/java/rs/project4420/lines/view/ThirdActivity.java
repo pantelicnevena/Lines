@@ -31,10 +31,6 @@ import com.google.android.gms.games.multiplayer.turnbased.TurnBasedMatchConfig;
 import com.google.android.gms.games.multiplayer.turnbased.TurnBasedMultiplayer;
 import com.google.example.games.basegameutils.BaseGameUtils;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,11 +38,12 @@ import rs.project4420.lines.Adapter;
 import rs.project4420.lines.R;
 import rs.project4420.lines.classes.DotItem;
 import rs.project4420.lines.classes.DotView;
+import rs.project4420.lines.classes.Matrix;
 import rs.project4420.lines.classes.MatrixItem;
 import rs.project4420.lines.classes.Polje;
 import rs.project4420.lines.data.GameData;
 import rs.project4420.lines.logic.LineSuccess;
-import rs.project4420.lines.logic.MultiplayerLogic;
+import rs.project4420.lines.logic.GameLogic;
 import rs.project4420.lines.solver.aStar;
 
 
@@ -118,7 +115,7 @@ public class ThirdActivity extends Activity
             gameData = GameData.unpersist(mMatch.getData());
             Log.d(TAG, "Data: "+gameData.data+ ", turn: "+ gameData.turnCounter);
 
-            matrix = MultiplayerLogic.returnMatrix(gameData);
+            matrix = gameData.matrix;
             adapter = new Adapter(this, matrix);
             adapter.notifyDataSetChanged();
             gridView.setAdapter(adapter);
@@ -128,8 +125,8 @@ public class ThirdActivity extends Activity
 
             //TODO poeni drugog igraca
 
-            next = MultiplayerLogic.returnNextColor(matrix);
-            next2 = MultiplayerLogic.returnNextColor(matrix); //TODO postaviti drugi dot
+            next = GameLogic.returnNextColor(matrix);
+            next2 = GameLogic.returnNextColor(matrix); //TODO postaviti drugi dot
             nextView2.setBackgroundResource(R.drawable.next_dot_player1);
             GradientDrawable gd = (GradientDrawable) nextView2.getBackground();
             gd.setColor(getResources().getColor(next2.getDot().getColor()));
@@ -162,7 +159,7 @@ public class ThirdActivity extends Activity
     public void onConnected(Bundle bundle) {
         Log.d(TAG, "connected");
 
-        MultiplayerLogic.loadIcons(dit, mMatch, mGoogleApiClient, playerIcon1, playerIcon2);
+        GameLogic.loadIcons(dit, mMatch, mGoogleApiClient, playerIcon1, playerIcon2);
 
         if (invitees == null) {
             Games.Invitations.registerInvitationListener(mGoogleApiClient, this);
@@ -229,15 +226,18 @@ public class ThirdActivity extends Activity
         String myParticipantId = mMatch.getParticipantId(playerId);
 
         gameData.data = "Nevena";
+        gameData.matrix = matrix;
+        gameData.score1 = 0;
+        gameData.score2 = 0;
 
-        matrix = MultiplayerLogic.setMatrixColors(matrix);
+        matrix = GameLogic.setMatrixColors(matrix);
         adapter = new Adapter(this, matrix);
         gridView.setAdapter(adapter);
         gridView.setHorizontalSpacing(10);
         gridView.setVerticalSpacing(10);
 
-        next = MultiplayerLogic.returnNextColor(matrix);
-        next2 = MultiplayerLogic.returnNextColor(matrix); //TODO postaviti drugi dot
+        next = GameLogic.returnNextColor(matrix);
+        next2 = GameLogic.returnNextColor(matrix); //TODO postaviti drugi dot
         nextView.setBackgroundResource(R.drawable.next_dot_player1);
         GradientDrawable gd = (GradientDrawable) nextView.getBackground();
         gd.setColor(getResources().getColor(next.getDot().getColor()));
@@ -278,7 +278,7 @@ public class ThirdActivity extends Activity
     public void onTurnBasedMatchReceived(TurnBasedMatch turnBasedMatch) {
         if (turnBasedMatch == null) { return; }
         mMatch = turnBasedMatch;
-        MultiplayerLogic.loadIcons(dit, mMatch, mGoogleApiClient, playerIcon1, playerIcon2);
+        GameLogic.loadIcons(dit, mMatch, mGoogleApiClient, playerIcon1, playerIcon2);
         gridView.setEnabled(true);
 
 
@@ -289,8 +289,9 @@ public class ThirdActivity extends Activity
         gameData = GameData.unpersist(data);
 //        Log.d(TAG, "tbm received: " + turnBasedMatch.getParticipantIds().get(0));
 
-
-        matrix = MultiplayerLogic.returnMatrix(gameData);
+        ((TextView)findViewById(R.id.score)).setText(String.valueOf(gameData.score1));
+        ((TextView)findViewById(R.id.score_second)).setText(String.valueOf(gameData.score2));
+        matrix = gameData.matrix;
         adapter = new Adapter(this, matrix);
         adapter.notifyDataSetChanged();
         gridView.setAdapter(adapter);
@@ -298,8 +299,8 @@ public class ThirdActivity extends Activity
         gridView.setVerticalSpacing(10);
         gridView.invalidate();
 
-        next = MultiplayerLogic.returnNextColor(matrix);
-        next2 = MultiplayerLogic.returnNextColor(matrix); //TODO postaviti drugi dot
+        next = GameLogic.returnNextColor(matrix);
+        next2 = GameLogic.returnNextColor(matrix); //TODO postaviti drugi dot
         nextView2.setBackgroundResource(R.drawable.next_dot_player1);
         GradientDrawable gd = (GradientDrawable) nextView2.getBackground();
         gd.setColor(getResources().getColor(next2.getDot().getColor()));
@@ -365,8 +366,8 @@ public class ThirdActivity extends Activity
                     vibe.vibrate(40);
                 } else {
                     pronadjenCilj = false;
-                    matrixCopy = MultiplayerLogic.napraviKopiju(matrix);
-                    matrixCopyItem = MultiplayerLogic.napraviKopijuPolja(matrix);
+                    matrixCopy = Matrix.napraviKopiju(matrix);
+                    matrixCopyItem = Matrix.napraviKopijuPolja(matrix);
                     List<MatrixItem> putanja = new ArrayList<>();
                     int xCilj = position/7;
                     int yCilj = position%7;
@@ -380,7 +381,7 @@ public class ThirdActivity extends Activity
                         matrix[lastSelected / 7][lastSelected % 7].setColor(R.color.grey);
                         matrix[position / 7][position % 7].setColor(lastColor);
 
-                        MultiplayerLogic.tranzicija(matrix, position, putanja, gridView);
+                        GameLogic.tranzicija(matrix, position, putanja, gridView);
                         lastSelected = -1;
 
                         View scroleBar = (View) findViewById(R.id.score_bar);
@@ -394,8 +395,8 @@ public class ThirdActivity extends Activity
                             @Override
                             public void run() {
 
-                                MultiplayerLogic.ubaciNoviDot(matrix, next, adapter, scoreBar, score);
-                                next = MultiplayerLogic.returnNextColor(matrix);
+                                GameLogic.ubaciNoviDot(matrix, next, adapter, scoreBar, score);
+                                next = GameLogic.returnNextColor(matrix);
                                 View nextView = (View) findViewById(R.id.next_dot_player1);
                                 nextView.setBackgroundResource(R.drawable.next_dot_player1);
                                 GradientDrawable gd = (GradientDrawable) nextView.getBackground();
@@ -411,14 +412,23 @@ public class ThirdActivity extends Activity
                         handler.postDelayed(new Runnable() {
                             @Override
                             public void run() {
-                                String nextParticipant = MultiplayerLogic.getNextParticipantId(mMatch, mGoogleApiClient);
+                                String nextParticipant = GameLogic.getNextParticipantId(mMatch, mGoogleApiClient);
                                 if (gameData == null){
                                     gameData = new GameData();
                                 }
 
                                 String points = ((TextView) findViewById(R.id.score)).getText().toString();
-                                gameData.data = MultiplayerLogic.returnMatrixJSON(matrix, getResources(), points).toString();
+                                Matrix m = new Matrix();
+                                gameData.data = m.toJSON(matrix).toString();
                                 gameData.turnCounter++;
+                                gameData.matrix = matrix;
+                                if (mMatch.getParticipantId(Games.Players.getCurrentPlayerId(mGoogleApiClient)).equals("p_1")){
+                                    gameData.score1 = Integer.valueOf(((TextView) findViewById(R.id.score)).getText().toString());
+                                    gameData.score2 = Integer.valueOf(((TextView) findViewById(R.id.score_second)).getText().toString());
+                                } else if (mMatch.getParticipantId(Games.Players.getCurrentPlayerId(mGoogleApiClient)).equals("p_2")){
+                                    gameData.score2 = Integer.valueOf(((TextView) findViewById(R.id.score)).getText().toString());
+                                    gameData.score1 = Integer.valueOf(((TextView) findViewById(R.id.score_second)).getText().toString());
+                                }
 
                                 Games.TurnBasedMultiplayer
                                         .takeTurn(mGoogleApiClient, mMatch.getMatchId(),

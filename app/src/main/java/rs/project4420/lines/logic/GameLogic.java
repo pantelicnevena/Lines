@@ -35,7 +35,7 @@ import rs.project4420.lines.data.GameData;
 /**
  * Created by nevena on 8.6.15..
  */
-public class MultiplayerLogic {
+public class GameLogic {
 
     private static final String TAG = "MultiplayerLogic";
 
@@ -59,6 +59,11 @@ public class MultiplayerLogic {
         return colors;
     }
 
+    /**
+     *
+     * @param matrix
+     * @return matrica sa random postavljenim kuglicama
+     */
     public static DotItem[][] setMatrixColors(DotItem[][] matrix){
         Random rnd = new Random();
         List<Integer> colors = returnColors() ;
@@ -75,82 +80,16 @@ public class MultiplayerLogic {
         return matrix;
     }
 
+
     /**
      *
-     * @param matrix - matrica izgenerisanog polja tackica u prvom potezu
-     * @param resources
-     * @return vraca jason objekat sa podacima o x, y, color o svakoj tackici iz matrice
+     * @param dit - asinhroni task
+     * @param mMatch - mec koji se igra
+     * @param mGoogleApiClient
+     * @param playerIcon1
+     * @param playerIcon2
+     * postavlja sliku ikonice igraca na sliku sa google+ naloga igraca
      */
-    public static JSONObject returnMatrixJSON(DotItem[][] matrix, Resources resources, String points){
-        List<Integer> colorArray = new ArrayList();
-        JSONObject object = null;
-        JSONArray json = new JSONArray();
-        for (int i = 0; i < 7; i++) {
-            for (int j = 0; j < 7; j++) {
-                try {
-                    object = new JSONObject();
-                    object.put("x", String.valueOf(i));
-                    object.put("y", String.valueOf(j));
-                    object.put("color", matrix[i][j].getColor());
-                    json.put(object);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-
-
-
-        JSONObject jsonObject = new JSONObject();
-        try {
-            jsonObject.put("Dots", json);
-            Log.d(TAG, ""+jsonObject.toString());
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        return jsonObject;
-    }
-
-
-    public static DotItem[][] returnMatrix (GameData gameData){
-        JSONObject json = new JSONObject();
-        JSONArray array = new JSONArray();
-        try {
-            json = new JSONObject(gameData.data);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        try {
-            array = json.getJSONArray("Dots");
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        List<Integer> colors = new ArrayList();
-        for (int i = 0; i < array.length(); i++) {
-            try {
-                JSONObject o = (JSONObject) array.get(i);
-                colors.add(Integer.valueOf(o.optString("color")));
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-
-        DotItem[][] matrix = new DotItem[7][7];
-
-        for (int i = 0; i < 7; i++) {
-            for (int j = 0; j < 7; j++) {
-                DotItem item = new DotItem();
-                item.setColor(colors.get(i * 7 + j));
-                matrix[i][j] = item;
-            }
-        }
-        return matrix;
-    }
-
-
     public static void loadIcons(AsyncTask dit, TurnBasedMatch mMatch, GoogleApiClient mGoogleApiClient, ImageView playerIcon1, ImageView playerIcon2) {
 
         // Player 1
@@ -181,7 +120,12 @@ public class MultiplayerLogic {
         (playerIcon2).invalidate();
     }
 
-
+    /**
+     *
+     * @param m
+     * @return objekat polje koji sadrzi boju koja
+     * ce se sledeca pojaviti prilikom pravljenja novog poteza
+     */
     public static Polje returnNextColor(final DotItem[][] m) {
         Random rnd = new Random();
 
@@ -196,29 +140,7 @@ public class MultiplayerLogic {
         return p;
     }
 
-    public static int[][] napraviKopiju (DotItem[][] matrix){
-        int[][] kopija = new int[7][7];
-        for (int i = 0; i < 7; i++) {
-            for (int j = 0; j < 7; j++) {
-                if (matrix[i][j].getColor() == R.color.grey)
-                    kopija[i][j] = 0;
-                else kopija[i][j] = 1;
-            }
-        }
-        return kopija;
-    };
 
-    public static MatrixItem[][] napraviKopijuPolja (DotItem[][] matrix){
-        MatrixItem[][] kopija = new MatrixItem[7][7];
-        for (int i = 0; i < 7; i++) {
-            for (int j = 0; j < 7; j++) {
-                if (matrix[i][j].getColor() == R.color.grey)
-                    kopija[i][j] = new MatrixItem(i, j, 0);
-                else kopija[i][j] = new MatrixItem(i, j, -1);
-            }
-        }
-        return kopija;
-    };
 
     /**
      *
@@ -236,7 +158,15 @@ public class MultiplayerLogic {
         return praznaPolja;
     };
 
-
+    /**
+     *
+     * @param matrix
+     * @param position - indeks pocetne pozicije u matrici
+     * @param put - put kojim se kuglica krece da bi stigla od pocetne do krajnje pozicije
+     * @param gv - matrica polja
+     * postavljanje animacije za svako polje koje se nalazi u listi PUT (lista predjenih
+     * polja od pocetne do krajnje pozicije)
+     */
     public static void tranzicija(final DotItem[][]matrix, int position, List<MatrixItem> put, final GridView gv){
         //animacija puta
         final List<ValueAnimator> animList = new ArrayList<>();
