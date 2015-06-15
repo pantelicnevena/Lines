@@ -2,6 +2,7 @@ package rs.project4420.lines.view;
 
 import android.animation.ValueAnimator;
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.drawable.GradientDrawable;
 import android.os.AsyncTask;
@@ -22,7 +23,6 @@ import com.google.android.gms.games.Games;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 import rs.project4420.lines.Adapter;
 import rs.project4420.lines.R;
@@ -41,24 +41,22 @@ public class DotsActivity extends ActionBarActivity implements AdapterView.OnIte
         GoogleApiClient.OnConnectionFailedListener {
 
     private static final String TAG = "DotsActivity";
+    DotItem[][] matrix = new DotItem[7][7];
+    int lastSelected = -1;
+
     Adapter adapter;
-    Random rnd;
     GridView table;
     GridView gridView;
+    Resources resources;
+    View scoreBar;
+    TextView tv;
+    ImageView iv;
+    ValueAnimator animator;
+    Polje next;
+    Vibrator vibe;
 
-    List<Integer> colors;
-
-    DotItem[][] matrix = new DotItem[7][7];
-    int[][] matrixCopy;
     MatrixItem[][] matrixCopyItem;
     boolean pronadjenCilj;
-    List<MatrixItem> putanja;
-    List<MatrixItem> put;
-    List<ValueAnimator> listaVA;
-    Polje next;
-
-    ValueAnimator animator;
-    int lastSelected = -1;
     private GoogleApiClient mGoogleApiClient;
     private AsyncTask<String, Void, Bitmap> dit;
 
@@ -71,6 +69,13 @@ public class DotsActivity extends ActionBarActivity implements AdapterView.OnIte
 
         //Hide Toolbar
         getSupportActionBar().hide();
+        setContentView(R.layout.activity_dots);
+        table = (GridView) findViewById(R.id.table);
+        scoreBar = (View) findViewById(R.id.score_bar);
+        tv = (TextView)findViewById(R.id.score);
+        iv = (ImageView) findViewById(R.id.player_image);
+        resources = getResources();
+        Vibrator vibe = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
 
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(this)
@@ -78,30 +83,7 @@ public class DotsActivity extends ActionBarActivity implements AdapterView.OnIte
                 .addApi(Games.API).addScope(Games.SCOPE_GAMES)
                 .build();
 
-        setContentView(R.layout.activity_dots);
-        table = (GridView) findViewById(R.id.table);
-
-        Random rnd = new Random();
-        List<Integer> pozicija = new ArrayList();
-        colors = new ArrayList<>();
-        colors.add(R.color.blue);
-        colors.add(R.color.red);
-        colors.add(R.color.purple);
-        colors.add(R.color.yellow);
-        colors.add(R.color.orange);
-        colors.add(R.color.light_blue);
-        colors.add(R.color.green);
-        colors.add(R.color.grey);
-
-        for (int i = 0; i < 7; i++) {
-            for (int j = 0; j < 7; j++) {
-                matrix[i][j] = new DotItem(R.color.grey);
-            }
-        }
-        for (int i = 0; i < 15; i++) {
-            matrix[rnd.nextInt(7)][rnd.nextInt(7)].setColor(colors.get(rnd.nextInt(7)));
-        }
-        //TODO ne sme da dodje do ponavljanja pozicija na koja se ubacuju obojena polja
+        matrix = GameLogic.setMatrixColors(matrix);
 
         gridView = (GridView)findViewById(R.id.table);
         adapter = new Adapter(this, matrix);
@@ -116,14 +98,11 @@ public class DotsActivity extends ActionBarActivity implements AdapterView.OnIte
         GradientDrawable gd = (GradientDrawable) nextView.getBackground();
         gd.setColor(getResources().getColor(next.getDot().getColor()));
 
-
         gridView.setOnItemClickListener(this);
     }
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        //Log.d(TAG, "position:" + position);
-
         //stopiraj prethodnu
         if(animator != null && animator.isRunning()){
             animator.end();
@@ -135,11 +114,9 @@ public class DotsActivity extends ActionBarActivity implements AdapterView.OnIte
             if (matrix[position/7][position%7].getColor() == R.color.grey){
                 //ako prethodno nije kliknuto na obojeno dugme
                 if (lastSelected == -1) {
-                    Vibrator vibe = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-                    vibe.vibrate(40);
+                    GameLogic.vibrate(vibe);
                 } else {
                     pronadjenCilj = false;
-                    matrixCopy = Matrix.napraviKopiju(matrix);
                     matrixCopyItem = Matrix.napraviKopijuPolja(matrix);
                     List<MatrixItem> putanja = new ArrayList<>();
                     int xCilj = position/7;
@@ -150,19 +127,15 @@ public class DotsActivity extends ActionBarActivity implements AdapterView.OnIte
 
                     if (putanja != null) {
                         final List<MatrixItem> finalPutanja = putanja;
-                        int lastColor = matrix[lastSelected / 7][lastSelected % 7].getColor();
-                        matrix[lastSelected / 7][lastSelected % 7].setColor(R.color.grey);
-                        matrix[position / 7][position % 7].setColor(lastColor);
+                        int lastColor = 0;
 
+                        GameLogic.moveDot(lastColor, lastSelected, position, matrix);
                         GameLogic.tranzicija(matrix, position, putanja, gridView);
+
                         lastSelected = -1;
-
-                        final View scoreBar = (View) findViewById(R.id.score_bar);
-                        final TextView tv = (TextView)findViewById(R.id.score);
-
                         matrix = LineSuccess.ponistiNizove(xCilj, yCilj, matrix, tv, scoreBar);
 
-
+                        final View nextView = (View) findViewById(R.id.next_dot);
                         Handler handler = new Handler();
                         handler.postDelayed(new Runnable() {
                             @Override
@@ -170,10 +143,9 @@ public class DotsActivity extends ActionBarActivity implements AdapterView.OnIte
 
                                 GameLogic.ubaciNoviDot(matrix, next, adapter, scoreBar, tv);
                                 next = GameLogic.returnNextColor(matrix);
-                                View nextView = (View) findViewById(R.id.next_dot);
                                 nextView.setBackgroundResource(R.drawable.next_dot);
                                 GradientDrawable gd = (GradientDrawable) nextView.getBackground();
-                                gd.setColor(getResources().getColor(next.getDot().getColor()));
+                                gd.setColor(resources.getColor(next.getDot().getColor()));
 
                                 adapter.notifyDataSetChanged();
                             }
@@ -181,9 +153,7 @@ public class DotsActivity extends ActionBarActivity implements AdapterView.OnIte
 
                     }else { //ako ne moze da stigne do cilja
                         lastSelected = -1;
-                        Vibrator vibe = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-                        vibe.vibrate(40);
-                        Log.d(TAG, "NE MOZE DA SE DODJE DO CILJA!!!!!!!!!!!!!!!");
+                        GameLogic.vibrate(vibe);
                     };
 
                     adapter.notifyDataSetChanged();
@@ -214,7 +184,6 @@ public class DotsActivity extends ActionBarActivity implements AdapterView.OnIte
     }
 
 
-
     @Override
     protected void onStart() {
         super.onStart();
@@ -230,27 +199,14 @@ public class DotsActivity extends ActionBarActivity implements AdapterView.OnIte
     @Override
     public void onConnected(Bundle bundle) {
         Log.d(TAG, "connected");
-
-        ImageView iv = (ImageView) findViewById(R.id.player_image);
-
-
-        if (Games.Players.getCurrentPlayer(mGoogleApiClient).getIconImageUrl() != null){
-            String url = Games.Players.getCurrentPlayer(mGoogleApiClient).getIconImageUrl().toString();
-            dit = new DownloadImageTask(iv).execute(url);
-        } else {
-            dit = new DownloadImageTask(iv).execute("https://lh3.googleusercontent.com/-9x24WfH1Ri8/AAAAAAAAAAI/AAAAAAAAAAA/zhHK3nMbRXs/s120-c/photo.jpg");
-        }
-
+        GameLogic.loadSinglePlayerIcon(mGoogleApiClient, iv, dit);
     }
 
     @Override
     public void onConnectionSuspended(int i) {
-
     }
 
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
-
     }
-
 }

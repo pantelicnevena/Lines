@@ -54,50 +54,48 @@ public class ThirdActivity extends Activity
 
     private static final String TAG = "ThirdAct";
     private static final int RC_SIGN_IN = 9001;
+
     private GoogleApiClient mGoogleApiClient;
     private boolean mResolvingConnectionFailure;
-    ArrayList<String> invitees;
-    GameData gameData;
+    private DotItem[][] matrix  = new DotItem[7][7];
+
     TurnBasedMatch mMatch;
-    String nextPlayer;
+    GameData gameData;
+    private boolean isDoingTurn;
+    ArrayList<String> invitees;
     private AsyncTask<String, Void, Bitmap> dit;
 
-    private boolean isDoingTurn;
+    int lastSelected = -1;
+    private MatrixItem[][] matrixCopyItem;
+    private Polje next;
+    private boolean pronadjenCilj;
 
     private GridView table;
-    List<Integer> colors;
-    private DotItem[][] matrix  = new DotItem[7][7];
     private GridView gridView;
     private Adapter adapter;
-
     ImageView playerIcon1;
     ImageView playerIcon2;
     private View nextView;
-    private View nextView2;
-    private Polje next;
-
-    private Polje next2;
     ValueAnimator animator;
-    int lastSelected = -1;
-    private boolean pronadjenCilj;
-    private int[][] matrixCopy;
-    private MatrixItem[][] matrixCopyItem;
     private TextView score;
+    private TextView score2;
     private View scoreBar;
+    Vibrator vibe;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_third);
+
         playerIcon1 = (ImageView) findViewById(R.id.player_image);
         playerIcon2 = (ImageView) findViewById(R.id.player_image_second);
         score = (TextView) findViewById(R.id.score);
+        score2 = (TextView) findViewById(R.id.score_second);
         scoreBar = (View) findViewById(R.id.score_bar);
-
         table = (GridView) findViewById(R.id.table);
         gridView = (GridView)findViewById(R.id.table);
         nextView = (View) findViewById(R.id.next_dot_player1);
-        nextView2 = (View) findViewById(R.id.next_dot_player2);
+        vibe = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
         gridView.setOnItemClickListener(this);
 
         mGoogleApiClient = new GoogleApiClient.Builder(this)
@@ -107,8 +105,11 @@ public class ThirdActivity extends Activity
                 .addScope(Games.SCOPE_GAMES)
                 .build();
 
-
         mMatch = (TurnBasedMatch) getIntent().getExtras().get("match");
+        next = GameLogic.returnNextColor(matrix);
+        nextView.setBackgroundResource(R.drawable.next_dot_player1);
+        GradientDrawable gd = (GradientDrawable) nextView.getBackground();
+        gd.setColor(getResources().getColor(next.getDot().getColor()));
 
         if (mMatch != null){
             gameData =  new GameData();
@@ -122,14 +123,6 @@ public class ThirdActivity extends Activity
             gridView.setHorizontalSpacing(10);
             gridView.setVerticalSpacing(10);
             gridView.invalidate();
-
-            //TODO poeni drugog igraca
-
-            next = GameLogic.returnNextColor(matrix);
-            next2 = GameLogic.returnNextColor(matrix); //TODO postaviti drugi dot
-            nextView2.setBackgroundResource(R.drawable.next_dot_player1);
-            GradientDrawable gd = (GradientDrawable) nextView2.getBackground();
-            gd.setColor(getResources().getColor(next2.getDot().getColor()));
         }
 
         invitees = getIntent().getStringArrayListExtra("invitees");
@@ -171,8 +164,6 @@ public class ThirdActivity extends Activity
                 .addInvitedPlayers(invitees)
                 .setAutoMatchCriteria(null)
                 .build();
-
-
 
         // Create and start the mMatch.
         Games.TurnBasedMultiplayer
@@ -236,13 +227,6 @@ public class ThirdActivity extends Activity
         gridView.setHorizontalSpacing(10);
         gridView.setVerticalSpacing(10);
 
-        next = GameLogic.returnNextColor(matrix);
-        next2 = GameLogic.returnNextColor(matrix); //TODO postaviti drugi dot
-        nextView.setBackgroundResource(R.drawable.next_dot_player1);
-        GradientDrawable gd = (GradientDrawable) nextView.getBackground();
-        gd.setColor(getResources().getColor(next.getDot().getColor()));
-
-
         // TODO: prikazi spiner
         Games.TurnBasedMultiplayer.takeTurn(mGoogleApiClient, match.getMatchId(),
                 gameData.persist(), myParticipantId ).setResultCallback(new ResultCallback<TurnBasedMultiplayer.UpdateMatchResult>() {
@@ -254,14 +238,11 @@ public class ThirdActivity extends Activity
         });
     }
 
-
-
     private void showTurnUI(TurnBasedMatch match) {
         byte[] data = match.getData();
         if(data == null){
             return;
         }
-
         gameData = GameData.unpersist(data);
     }
 
@@ -288,9 +269,8 @@ public class ThirdActivity extends Activity
             return; }
         gameData = GameData.unpersist(data);
 //        Log.d(TAG, "tbm received: " + turnBasedMatch.getParticipantIds().get(0));
+        GameLogic.showScoreUpdate(mMatch, mGoogleApiClient, gameData, score, score2);
 
-        ((TextView)findViewById(R.id.score)).setText(String.valueOf(gameData.score1));
-        ((TextView)findViewById(R.id.score_second)).setText(String.valueOf(gameData.score2));
         matrix = gameData.matrix;
         adapter = new Adapter(this, matrix);
         adapter.notifyDataSetChanged();
@@ -299,18 +279,8 @@ public class ThirdActivity extends Activity
         gridView.setVerticalSpacing(10);
         gridView.invalidate();
 
-        next = GameLogic.returnNextColor(matrix);
-        next2 = GameLogic.returnNextColor(matrix); //TODO postaviti drugi dot
-        nextView2.setBackgroundResource(R.drawable.next_dot_player1);
-        GradientDrawable gd = (GradientDrawable) nextView2.getBackground();
-        gd.setColor(getResources().getColor(next2.getDot().getColor()));
-
-
-//        Toast.makeText(this, json.toString(), Toast.LENGTH_SHORT).show();
         isDoingTurn = true;
         showTurnUI(turnBasedMatch);
-
-
     }
 
     @Override
@@ -362,11 +332,9 @@ public class ThirdActivity extends Activity
             if (matrix[position/7][position%7].getColor() == R.color.grey){
                 //ako prethodno nije kliknuto na obojeno dugme
                 if (lastSelected == -1) {
-                    Vibrator vibe = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-                    vibe.vibrate(40);
+                    GameLogic.vibrate(vibe);
                 } else {
                     pronadjenCilj = false;
-                    matrixCopy = Matrix.napraviKopiju(matrix);
                     matrixCopyItem = Matrix.napraviKopijuPolja(matrix);
                     List<MatrixItem> putanja = new ArrayList<>();
                     int xCilj = position/7;
@@ -383,52 +351,29 @@ public class ThirdActivity extends Activity
 
                         GameLogic.tranzicija(matrix, position, putanja, gridView);
                         lastSelected = -1;
-
-                        View scroleBar = (View) findViewById(R.id.score_bar);
-                        TextView tv = (TextView)findViewById(R.id.score);
-
-                        matrix = LineSuccess.ponistiNizove(xCilj, yCilj, matrix, tv, scroleBar);
-
+                        matrix = LineSuccess.ponistiNizove(xCilj, yCilj, matrix, score, scoreBar);
 
                         Handler handler = new Handler();
                         handler.postDelayed(new Runnable() {
                             @Override
                             public void run() {
-
-                                GameLogic.ubaciNoviDot(matrix, next, adapter, scoreBar, score);
+                                matrix = GameLogic.ubaciNoviDot(matrix, next, adapter, scoreBar, score);
                                 next = GameLogic.returnNextColor(matrix);
-                                View nextView = (View) findViewById(R.id.next_dot_player1);
                                 nextView.setBackgroundResource(R.drawable.next_dot_player1);
                                 GradientDrawable gd = (GradientDrawable) nextView.getBackground();
                                 gd.setColor(getResources().getColor(next.getDot().getColor()));
-
+                                nextView.invalidate();
                                 adapter.notifyDataSetChanged();
                             }
                         }, 370);
 
 
                         // NEXT PARTICIPANT TURN
-
                         handler.postDelayed(new Runnable() {
                             @Override
                             public void run() {
                                 String nextParticipant = GameLogic.getNextParticipantId(mMatch, mGoogleApiClient);
-                                if (gameData == null){
-                                    gameData = new GameData();
-                                }
-
-                                String points = ((TextView) findViewById(R.id.score)).getText().toString();
-                                Matrix m = new Matrix();
-                                gameData.data = m.toJSON(matrix).toString();
-                                gameData.turnCounter++;
-                                gameData.matrix = matrix;
-                                if (mMatch.getParticipantId(Games.Players.getCurrentPlayerId(mGoogleApiClient)).equals("p_1")){
-                                    gameData.score1 = Integer.valueOf(((TextView) findViewById(R.id.score)).getText().toString());
-                                    gameData.score2 = Integer.valueOf(((TextView) findViewById(R.id.score_second)).getText().toString());
-                                } else if (mMatch.getParticipantId(Games.Players.getCurrentPlayerId(mGoogleApiClient)).equals("p_2")){
-                                    gameData.score2 = Integer.valueOf(((TextView) findViewById(R.id.score)).getText().toString());
-                                    gameData.score1 = Integer.valueOf(((TextView) findViewById(R.id.score_second)).getText().toString());
-                                }
+                                GameLogic.ParticipantTurn(mMatch, mGoogleApiClient, gameData, score, score2);
 
                                 Games.TurnBasedMultiplayer
                                         .takeTurn(mGoogleApiClient, mMatch.getMatchId(),
@@ -440,13 +385,11 @@ public class ThirdActivity extends Activity
                                 });
                                 gridView.setEnabled(false);
                             }
-                        }, 400);
+                        }, 420);
 
                     }else { //ako ne moze da stigne do cilja
                         lastSelected = -1;
-                        Vibrator vibe = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-                        vibe.vibrate(40);
-                        Log.d(TAG, "NE MOZE DA SE DODJE DO CILJA!!!!!!!!!!!!!!!");
+                        GameLogic.vibrate(vibe);
                     };
 
                     adapter.notifyDataSetChanged();

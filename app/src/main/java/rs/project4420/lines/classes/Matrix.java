@@ -69,18 +69,6 @@ public class Matrix {
         }
     }
 
-    public static int[][] napraviKopiju (DotItem[][] matrix){
-        int[][] kopija = new int[7][7];
-        for (int i = 0; i < 7; i++) {
-            for (int j = 0; j < 7; j++) {
-                if (matrix[i][j].getColor() == R.color.grey)
-                    kopija[i][j] = 0;
-                else kopija[i][j] = 1;
-            }
-        }
-        return kopija;
-    };
-
     public static MatrixItem[][] napraviKopijuPolja (DotItem[][] matrix){
         MatrixItem[][] kopija = new MatrixItem[7][7];
         for (int i = 0; i < 7; i++) {

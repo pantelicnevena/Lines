@@ -1,10 +1,13 @@
 package rs.project4420.lines.logic;
 
+import android.animation.Animator;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.res.Resources;
+import android.graphics.drawable.GradientDrawable;
 import android.os.AsyncTask;
 import android.os.Handler;
+import android.os.Vibrator;
 import android.util.Log;
 import android.view.View;
 import android.widget.GridView;
@@ -13,8 +16,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.games.Games;
 import com.google.android.gms.games.multiplayer.turnbased.TurnBasedMatch;
+import com.google.android.gms.games.multiplayer.turnbased.TurnBasedMultiplayer;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -27,6 +32,7 @@ import java.util.Random;
 import rs.project4420.lines.Adapter;
 import rs.project4420.lines.classes.DotItem;
 import rs.project4420.lines.classes.DotView;
+import rs.project4420.lines.classes.Matrix;
 import rs.project4420.lines.classes.MatrixItem;
 import rs.project4420.lines.classes.Polje;
 import rs.project4420.lines.R;
@@ -108,16 +114,37 @@ public class GameLogic {
             (playerIcon2).invalidate();
             return; }
 
+        String playerId = Games.Players.getCurrentPlayerId(mGoogleApiClient);
+        String player = mMatch.getParticipantId(playerId);
+
         //Player 2
-        if (mMatch.getParticipants().get(1).getIconImageUrl() != null) {
-            dit = new DownloadImageTask(playerIcon2)
-                    .execute(mMatch.getParticipants().get(1).getIconImageUrl().toString());
+        String url = null;
+        if (player.equals("p_1")) { url = mMatch.getParticipants().get(1).getIconImageUrl(); }
+        else if (player.equals("p_2")){ url = mMatch.getParticipants().get(0).getIconImageUrl(); }
+
+        if (url != null){ dit = new DownloadImageTask(playerIcon2).execute(url.toString()); }
+        else { dit = new DownloadImageTask(playerIcon2).execute(
+                "https://lh3.googleusercontent.com/-9x24WfH1Ri8/AAAAAAAAAAI/AAAAAAAAAAA/zhHK3nMbRXs/s120-c/photo.jpg");
         }
-        else {
-            dit = new DownloadImageTask(playerIcon2)
-                    .execute("https://lh3.googleusercontent.com/-9x24WfH1Ri8/AAAAAAAAAAI/AAAAAAAAAAA/zhHK3nMbRXs/s120-c/photo.jpg");
-        }
+
         (playerIcon2).invalidate();
+    }
+
+    /**
+     *
+     * @param mGoogleApiClient
+     * @param iv
+     * @param dit
+     */
+    public static void loadSinglePlayerIcon(GoogleApiClient mGoogleApiClient, ImageView iv, AsyncTask dit){
+
+        if (Games.Players.getCurrentPlayer(mGoogleApiClient).getIconImageUrl() != null){
+            String url = Games.Players.getCurrentPlayer(mGoogleApiClient).getIconImageUrl().toString();
+            dit = new DownloadImageTask(iv).execute(url);
+        } else {
+            dit = new DownloadImageTask(iv).execute("https://lh3.googleusercontent.com/-9x24WfH1Ri8/AAAAAAAAAAI/AAAAAAAAAAA/zhHK3nMbRXs/s120-c/photo.jpg");
+        }
+
     }
 
     /**
@@ -209,6 +236,25 @@ public class GameLogic {
         }
     }
 
+
+    /**
+     *
+     * @param mMatch
+     * @param mGoogleApiClient
+     * @param gameData
+     * @param score1
+     * @param score2
+     * postavlja
+     */
+    public static void showScoreUpdate(TurnBasedMatch mMatch, GoogleApiClient mGoogleApiClient, GameData gameData, TextView score1, TextView score2){
+        if (mMatch.getParticipantId(Games.Players.getCurrentPlayerId(mGoogleApiClient)).equals("p_1")){
+            score1.setText(String.valueOf(gameData.score1));
+            score2.setText(String.valueOf(gameData.score2));}
+        else if (mMatch.getParticipantId(Games.Players.getCurrentPlayerId(mGoogleApiClient)).equals("p_2")){
+            score1.setText(String.valueOf(gameData.score2));
+            score2.setText(String.valueOf(gameData.score1));}
+    }
+
     /**
      *
      * @param m matrica trenutnog stanja
@@ -278,4 +324,51 @@ public class GameLogic {
             return null;
         }
     }
+
+
+    /**
+     *
+     * @param lastColor
+     * @param lastSelected
+     * @param position
+     * @param matrix
+     */
+    public static void moveDot(int lastColor, int lastSelected, int position, DotItem[][] matrix){
+        lastColor = matrix[lastSelected / 7][lastSelected % 7].getColor();
+        matrix[lastSelected / 7][lastSelected % 7].setColor(R.color.grey);
+        matrix[position / 7][position % 7].setColor(lastColor);
+    }
+
+    public static void vibrate (Vibrator vibe){
+        vibe.vibrate(40);
+    }
+
+    /**
+     *
+     * @param mMatch
+     * @param mGoogleApiClient
+     * @param gameData
+     * @param score1
+     * @param score2
+     */
+    public static void ParticipantTurn(TurnBasedMatch mMatch, GoogleApiClient mGoogleApiClient, GameData gameData, TextView score1, TextView score2){
+        if (gameData == null){
+            gameData = new GameData();
+        }
+
+        Matrix m = new Matrix();
+        gameData.data = m.toJSON(matrix).toString();
+        gameData.turnCounter++;
+        gameData.matrix = matrix;
+        if (mMatch.getParticipantId(Games.Players.getCurrentPlayerId(mGoogleApiClient)).equals("p_1")){
+            gameData.score1 = Integer.valueOf(score1.getText().toString());
+            gameData.score2 = Integer.valueOf(score2.getText().toString());
+        } else if (mMatch.getParticipantId(Games.Players.getCurrentPlayerId(mGoogleApiClient)).equals("p_2")){
+            gameData.score2 = Integer.valueOf(score1.getText().toString());
+            gameData.score1 = Integer.valueOf(score2.getText().toString());
+        }
+
+
+    }
+
 }

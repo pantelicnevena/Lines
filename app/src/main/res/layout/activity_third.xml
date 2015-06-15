@@ -71,7 +71,7 @@
         android:layout_height="wrap_content">
 
         <GridView
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="20dp"
             android:id="@+id/table"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -89,26 +89,13 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:layout_marginTop="15dp">
+        android:layout_marginTop="25dp">
 
         <LinearLayout
             android:layout_width="25dp"
             android:layout_height="match_parent"
             android:orientation="vertical"
             android:layout_marginLeft="16dp">
-
-            <View
-                android:id="@+id/next_dot_player2"
-                android:layout_width="18dp"
-                android:layout_height="18dp"
-                android:layout_marginTop="3dp"
-                android:layout_marginRight="4dp"
-                android:background="@drawable/next_dot_player1"/>
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="11dp"
-                android:text="next:"/>
         </LinearLayout>
 
         <LinearLayout
