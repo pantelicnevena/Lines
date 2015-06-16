@@ -266,6 +266,7 @@ public class GameLogic {
     public static DotItem[][] ubaciNoviDot(final DotItem[][] m, final Polje polje, final Adapter adapter, final View scoreBar, final TextView score) {
         Random rnd = new Random();
         List<Polje> praznaPolja = vratiListuPraznihPolja(m);
+        if (praznaPolja.size() == 0) { return matrix; }
         int praznoPolje = rnd.nextInt(praznaPolja.size());
         final Polje p = polje;
         p.setN(praznaPolja.get(praznoPolje).getN());

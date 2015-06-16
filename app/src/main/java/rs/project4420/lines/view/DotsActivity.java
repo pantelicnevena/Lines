@@ -1,6 +1,7 @@
 package rs.project4420.lines.view;
 
 import android.animation.ValueAnimator;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -31,7 +32,6 @@ import rs.project4420.lines.classes.DotView;
 import rs.project4420.lines.classes.Matrix;
 import rs.project4420.lines.classes.MatrixItem;
 import rs.project4420.lines.classes.Polje;
-import rs.project4420.lines.logic.DownloadImageTask;
 import rs.project4420.lines.logic.LineSuccess;
 import rs.project4420.lines.logic.GameLogic;
 import rs.project4420.lines.solver.aStar;
@@ -51,14 +51,18 @@ public class DotsActivity extends ActionBarActivity implements AdapterView.OnIte
     View scoreBar;
     TextView tv;
     ImageView iv;
+    View nextView;
+    View nextView2;
     ValueAnimator animator;
     Polje next;
+    Polje next2;
     Vibrator vibe;
 
     MatrixItem[][] matrixCopyItem;
     boolean pronadjenCilj;
     private GoogleApiClient mGoogleApiClient;
     private AsyncTask<String, Void, Bitmap> dit;
+    Context context;
 
     public DotsActivity() {
     }
@@ -69,13 +73,18 @@ public class DotsActivity extends ActionBarActivity implements AdapterView.OnIte
 
         //Hide Toolbar
         getSupportActionBar().hide();
+        context = this;
         setContentView(R.layout.activity_dots);
         table = (GridView) findViewById(R.id.table);
         scoreBar = (View) findViewById(R.id.score_bar);
         tv = (TextView)findViewById(R.id.score);
         iv = (ImageView) findViewById(R.id.player_image);
         resources = getResources();
-        Vibrator vibe = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+        vibe = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+        nextView = (View) findViewById(R.id.next_dot);
+        nextView2 = (View) findViewById(R.id.next_dot_second);
+        nextView.setBackgroundResource(R.drawable.next_dot);
+        nextView2.setBackgroundResource(R.drawable.next_dot);
 
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(this)
@@ -93,10 +102,12 @@ public class DotsActivity extends ActionBarActivity implements AdapterView.OnIte
 
         //postavljanje sledece nove kuglice
         next = GameLogic.returnNextColor(matrix);
-        View nextView = (View) findViewById(R.id.next_dot);
-        nextView.setBackgroundResource(R.drawable.next_dot);
+        next2 = GameLogic.returnNextColor(matrix);
+
         GradientDrawable gd = (GradientDrawable) nextView.getBackground();
+        GradientDrawable gd2 = (GradientDrawable) nextView2.getBackground();
         gd.setColor(getResources().getColor(next.getDot().getColor()));
+        gd2.setColor(getResources().getColor(next2.getDot().getColor()));
 
         gridView.setOnItemClickListener(this);
     }
@@ -135,17 +146,22 @@ public class DotsActivity extends ActionBarActivity implements AdapterView.OnIte
                         lastSelected = -1;
                         matrix = LineSuccess.ponistiNizove(xCilj, yCilj, matrix, tv, scoreBar);
 
-                        final View nextView = (View) findViewById(R.id.next_dot);
                         Handler handler = new Handler();
                         handler.postDelayed(new Runnable() {
                             @Override
                             public void run() {
-
                                 GameLogic.ubaciNoviDot(matrix, next, adapter, scoreBar, tv);
+                                GameLogic.ubaciNoviDot(matrix, next2, adapter, scoreBar, tv);
+                                if (((List<Polje>)GameLogic.vratiListuPraznihPolja(matrix)).size() == 0)
+                                    new AlertDialog.Builder(context)
+                                            .setTitle("Kraj igre")
+                                            .setMessage("Igra je završena.\nVaš rezultat je: "+tv.getText().toString()).show();
                                 next = GameLogic.returnNextColor(matrix);
-                                nextView.setBackgroundResource(R.drawable.next_dot);
+                                next2 = GameLogic.returnNextColor(matrix);
                                 GradientDrawable gd = (GradientDrawable) nextView.getBackground();
+                                GradientDrawable gd2 = (GradientDrawable) nextView2.getBackground();
                                 gd.setColor(resources.getColor(next.getDot().getColor()));
+                                gd2.setColor(resources.getColor(next2.getDot().getColor()));
 
                                 adapter.notifyDataSetChanged();
                             }

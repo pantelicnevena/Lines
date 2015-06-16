@@ -1,6 +1,7 @@
 package rs.project4420.lines.view;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -30,10 +31,16 @@ public class SecondActivity extends Activity
     private static final int RC_LOOK_AT_MATCHES = 9003;
     private GoogleApiClient mGoogleApiClient;
     private boolean mResolvingConnectionFailure;
+    ProgressDialog progress;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_second);
+        progress = new ProgressDialog(this);
+        progress.setTitle("Loading");
+        progress.setMessage("Wait while loading...");
+        progress.show();
         if (mGoogleApiClient != null) {
             if(mGoogleApiClient.isConnected())
                 Log.d(TAG, "already connected");
@@ -120,10 +127,12 @@ public class SecondActivity extends Activity
     @Override
     public void onConnected(Bundle bundle) {
         Log.d(TAG, "new connection");
+        progress.dismiss();
     }
 
     @Override
     public void onConnectionSuspended(int i) {
+        progress.dismiss();
     }
 
     @Override
@@ -133,6 +142,7 @@ public class SecondActivity extends Activity
             return;
         }
         Log.d(TAG, "connection failed");
+        progress.dismiss();
 
         // If the sign in button was clicked or if auto sign-in is enabled,
         // launch the sign-in flow

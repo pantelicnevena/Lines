@@ -106,6 +106,7 @@ public class ThirdActivity extends Activity
                 .build();
 
         mMatch = (TurnBasedMatch) getIntent().getExtras().get("match");
+
         next = GameLogic.returnNextColor(matrix);
         nextView.setBackgroundResource(R.drawable.next_dot_player1);
         GradientDrawable gd = (GradientDrawable) nextView.getBackground();
@@ -332,7 +333,7 @@ public class ThirdActivity extends Activity
             if (matrix[position/7][position%7].getColor() == R.color.grey){
                 //ako prethodno nije kliknuto na obojeno dugme
                 if (lastSelected == -1) {
-                    GameLogic.vibrate(vibe);
+                    vibe.vibrate(40);
                 } else {
                     pronadjenCilj = false;
                     matrixCopyItem = Matrix.napraviKopijuPolja(matrix);
@@ -389,7 +390,7 @@ public class ThirdActivity extends Activity
 
                     }else { //ako ne moze da stigne do cilja
                         lastSelected = -1;
-                        GameLogic.vibrate(vibe);
+                        vibe.vibrate(40);
                     };
 
                     adapter.notifyDataSetChanged();

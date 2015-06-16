@@ -25,7 +25,7 @@ public class LineSuccess {
 
         if (LineSuccess.ponistiNizGore(xCilj, yCilj, matrix) != null){
             matrix = LineSuccess.ponistiNizGore(xCilj, yCilj, matrix);
-            params.width = scroleBar.getLayoutParams().width + 2;
+            params.width = scroleBar.getLayoutParams().width + 5;
             scroleBar.setLayoutParams(params);
             tv.setText(String.valueOf(score+8));
             return matrix;
@@ -33,7 +33,7 @@ public class LineSuccess {
 
         if (LineSuccess.ponistiNizLevo(xCilj, yCilj, matrix) != null){
             matrix = LineSuccess.ponistiNizLevo(xCilj, yCilj, matrix);
-            params.width = scroleBar.getLayoutParams().width + 2;
+            params.width = scroleBar.getLayoutParams().width + 5;
             scroleBar.setLayoutParams(params);
             tv.setText(String.valueOf(score+8));
             return matrix;
@@ -41,7 +41,7 @@ public class LineSuccess {
 
         if (LineSuccess.ponistiNizDijagonalnoGlavna(xCilj, yCilj, matrix) != null) {
             matrix = LineSuccess.ponistiNizDijagonalnoGlavna(xCilj, yCilj, matrix);
-            params.width = scroleBar.getLayoutParams().width + 2;
+            params.width = scroleBar.getLayoutParams().width + 5;
             scroleBar.setLayoutParams(params);
             tv.setText(String.valueOf(score+8));
             return matrix;
@@ -49,7 +49,7 @@ public class LineSuccess {
 
         if (LineSuccess.ponistiNizDijagonalnoSporedna(xCilj, yCilj, matrix) != null){
             matrix = LineSuccess.ponistiNizDijagonalnoSporedna(xCilj, yCilj, matrix);
-            params.width = scroleBar.getLayoutParams().width + 2;
+            params.width = scroleBar.getLayoutParams().width + 5;
             scroleBar.setLayoutParams(params);
             tv.setText(String.valueOf(score+8));
             return matrix;

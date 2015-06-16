@@ -1,6 +1,7 @@
 package rs.project4420.lines.view;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -27,11 +28,18 @@ public class LoginActivity extends Activity
     private static int RC_SIGN_IN = 9001;
     private GoogleApiClient mGoogleApiClient;
     private boolean mResolvingConnectionFailure = false;
+    ProgressDialog progress;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        progress = new ProgressDialog(this);
+        findViewById(R.id.sign_in_button).setVisibility(View.VISIBLE);
+        findViewById(R.id.sign_out_button).setVisibility(View.GONE);
+        findViewById(R.id.second_act).setVisibility(View.GONE);
+
+
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
@@ -41,6 +49,9 @@ public class LoginActivity extends Activity
             @Override
             public void onClick(View v) {
                 mGoogleApiClient.connect();
+                progress.setTitle("Loading");
+                progress.setMessage("Wait while loading...");
+                progress.show();
                 Log.d(TAG, "google api connect()");
             }
         });
@@ -70,14 +81,15 @@ public class LoginActivity extends Activity
     @Override
     protected void onStart() {
         super.onStart();
-        if (mGoogleApiClient.isConnected()){
+
+        /*if (mGoogleApiClient.isConnected()){
             findViewById(R.id.sign_in_button).setVisibility(View.GONE);
             findViewById(R.id.sign_out_button).setVisibility(View.VISIBLE);
             findViewById(R.id.second_act).setVisibility(View.VISIBLE);
         } else {
             mGoogleApiClient.connect();
             findViewById(R.id.second_act).setVisibility(View.GONE);
-        }
+        }*/
     }
 
     @Override
@@ -92,6 +104,7 @@ public class LoginActivity extends Activity
         findViewById(R.id.sign_in_button).setVisibility(View.GONE);
         findViewById(R.id.sign_out_button).setVisibility(View.VISIBLE);
         findViewById(R.id.second_act).setVisibility(View.VISIBLE);
+        progress.dismiss();
     }
 
     @Override
