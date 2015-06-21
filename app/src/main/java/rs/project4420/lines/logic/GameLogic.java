@@ -51,8 +51,6 @@ public class GameLogic {
      */
     public static List<Integer> returnColors(){
         List<Integer> colors = new ArrayList();
-        Random rnd = new Random();
-        List<Integer> pozicija = new ArrayList();
         colors = new ArrayList<>();
         colors.add(R.color.blue);
         colors.add(R.color.red);
@@ -369,6 +367,10 @@ public class GameLogic {
             gameData.score1 = Integer.valueOf(score2.getText().toString());
         }
 
+
+    }
+
+    public static void setBorder(){
 
     }
 

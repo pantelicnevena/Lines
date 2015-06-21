@@ -4,6 +4,10 @@ import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.drawable.GradientDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -12,6 +16,7 @@ import android.os.Vibrator;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.ImageView;
@@ -50,7 +55,10 @@ import rs.project4420.lines.solver.aStar;
 public class ThirdActivity extends Activity
         implements GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
-        OnInvitationReceivedListener, OnTurnBasedMatchUpdateReceivedListener, ResultCallback<TurnBasedMultiplayer.InitiateMatchResult>, AdapterView.OnItemClickListener {
+        OnInvitationReceivedListener,
+        OnTurnBasedMatchUpdateReceivedListener,
+        ResultCallback<TurnBasedMultiplayer.InitiateMatchResult>,
+        AdapterView.OnItemClickListener {
 
     private static final String TAG = "ThirdAct";
     private static final int RC_SIGN_IN = 9001;
@@ -67,6 +75,7 @@ public class ThirdActivity extends Activity
 
     int lastSelected = -1;
     private MatrixItem[][] matrixCopyItem;
+    DotItem[][] mmm;
     private Polje next;
     private boolean pronadjenCilj;
 
@@ -80,6 +89,7 @@ public class ThirdActivity extends Activity
     private TextView score;
     private TextView score2;
     private View scoreBar;
+    private View scoreBar2;
     Vibrator vibe;
 
     @Override
@@ -92,6 +102,7 @@ public class ThirdActivity extends Activity
         score = (TextView) findViewById(R.id.score);
         score2 = (TextView) findViewById(R.id.score_second);
         scoreBar = (View) findViewById(R.id.score_bar);
+        scoreBar2 = (View) findViewById(R.id.score_bar_second);
         table = (GridView) findViewById(R.id.table);
         gridView = (GridView)findViewById(R.id.table);
         nextView = (View) findViewById(R.id.next_dot_player1);
@@ -139,7 +150,7 @@ public class ThirdActivity extends Activity
     @Override
     protected void onStop() {
         super.onStop();
-        mGoogleApiClient.disconnect();
+        //mGoogleApiClient.disconnect();
     }
 
     @Override
@@ -261,16 +272,21 @@ public class ThirdActivity extends Activity
         if (turnBasedMatch == null) { return; }
         mMatch = turnBasedMatch;
         GameLogic.loadIcons(dit, mMatch, mGoogleApiClient, playerIcon1, playerIcon2);
-        gridView.setEnabled(true);
-
+        ViewGroup.LayoutParams params = scoreBar2.getLayoutParams();
+        params.width = scoreBar2.getLayoutParams().width + 5;
+        scoreBar2.setLayoutParams(params);
 
         byte[] data = turnBasedMatch.getData();
-        if (gameData == GameData.unpersist(data)) {
+        if (gameData.turnCounter == 0) {
             Toast.makeText(this, "Prihvacen je invite", Toast.LENGTH_SHORT).show();
             return; }
         gameData = GameData.unpersist(data);
-//        Log.d(TAG, "tbm received: " + turnBasedMatch.getParticipantIds().get(0));
+        gridView.setEnabled(true);
         GameLogic.showScoreUpdate(mMatch, mGoogleApiClient, gameData, score, score2);
+
+        int sc = 5 + Integer.valueOf(score2.getText().toString());
+        params.width = sc;
+        scoreBar2.setLayoutParams(params);
 
         matrix = gameData.matrix;
         adapter = new Adapter(this, matrix);

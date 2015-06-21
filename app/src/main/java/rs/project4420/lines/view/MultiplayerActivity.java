@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import rs.project4420.lines.R;
 
 
-public class SecondActivity extends Activity
+public class MultiplayerActivity extends Activity
         implements GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener, OnInvitationReceivedListener{
     private static final String TAG = "SecondAct";
@@ -36,7 +36,7 @@ public class SecondActivity extends Activity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_second);
+        setContentView(R.layout.activity_multiplayer);
         progress = new ProgressDialog(this);
         progress.setTitle("Loading");
         progress.setMessage("Wait while loading...");
@@ -69,13 +69,6 @@ public class SecondActivity extends Activity
             }
         });
 
-        findViewById(R.id.single_player).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), DotsActivity.class);
-                startActivity(intent);
-            }
-        });
     }
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {

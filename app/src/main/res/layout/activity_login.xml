@@ -7,23 +7,84 @@
     android:orientation="vertical"
     tools:context="rs.project4420.lines.view.LoginActivity">
 
-
-
-    <com.google.android.gms.common.SignInButton
-        android:id="@+id/sign_in_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-
-    <Button
-        android:id="@+id/sign_out_button"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Sign out"/>
+        android:orientation="vertical"
+        android:gravity="center"
+        android:layout_marginTop="30dp"
+        android:layout_weight=".60">
 
-    <Button
-        android:id="@+id/second_act"
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:layout_weight=".20">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="Lines"
+                android:fontFamily="sans-serif-light"
+                android:textSize="62dp"
+                />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="115dp"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:layout_weight=".80">
+
+            <View
+                android:id="@+id/login_dot"
+                android:layout_width="105dp"
+                android:layout_height="105dp"
+                android:background="@drawable/next_dot"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Second act"/>
+        android:orientation="vertical"
+        android:layout_weight=".40">
+
+        <com.google.android.gms.common.SignInButton
+            android:id="@+id/sign_in_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <Button
+            android:id="@+id/single_player_btn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Single player"/>
+
+        <Button
+            android:id="@+id/multi_player_btn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:text="Multiplayer"/>
+
+        <Button
+            android:id="@+id/sign_out_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Sign out"/>
+
+        <!--<Button
+            android:id="@+id/second_act"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Second act"/>-->
+
+        </LinearLayout>
+
 
 </LinearLayout>

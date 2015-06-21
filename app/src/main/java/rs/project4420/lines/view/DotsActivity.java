@@ -37,7 +37,8 @@ import rs.project4420.lines.logic.GameLogic;
 import rs.project4420.lines.solver.aStar;
 
 
-public class DotsActivity extends ActionBarActivity implements AdapterView.OnItemClickListener, GoogleApiClient.ConnectionCallbacks,
+public class DotsActivity extends ActionBarActivity implements AdapterView.OnItemClickListener,
+        GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener {
 
     private static final String TAG = "DotsActivity";

@@ -1,11 +1,14 @@
 package rs.project4420.lines.view;
 
+import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -16,8 +19,11 @@ import com.google.android.gms.games.multiplayer.turnbased.OnTurnBasedMatchUpdate
 import com.google.android.gms.games.multiplayer.turnbased.TurnBasedMatch;
 import com.google.example.games.basegameutils.BaseGameUtils;
 
+import java.util.List;
+import java.util.Random;
+
 import rs.project4420.lines.R;
-import rs.project4420.lines.view.SecondActivity;
+import rs.project4420.lines.logic.GameLogic;
 
 
 public class LoginActivity extends Activity
@@ -29,15 +35,20 @@ public class LoginActivity extends Activity
     private GoogleApiClient mGoogleApiClient;
     private boolean mResolvingConnectionFailure = false;
     ProgressDialog progress;
+    View kuglica;
+    boolean check;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         progress = new ProgressDialog(this);
+        kuglica = (View) findViewById(R.id.login_dot);
+        check = true;
         findViewById(R.id.sign_in_button).setVisibility(View.VISIBLE);
+        findViewById(R.id.single_player_btn).setVisibility(View.GONE);
+        findViewById(R.id.multi_player_btn).setVisibility(View.GONE);
         findViewById(R.id.sign_out_button).setVisibility(View.GONE);
-        findViewById(R.id.second_act).setVisibility(View.GONE);
 
 
         mGoogleApiClient = new GoogleApiClient.Builder(this)
@@ -55,6 +66,7 @@ public class LoginActivity extends Activity
                 Log.d(TAG, "google api connect()");
             }
         });
+
         findViewById(R.id.sign_out_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -69,27 +81,29 @@ public class LoginActivity extends Activity
                 }
             }
         });
-        findViewById(R.id.second_act).setOnClickListener(new View.OnClickListener() {
+
+        findViewById(R.id.single_player_btn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(),SecondActivity.class);
+                Intent intent = new Intent(getApplicationContext(),DotsActivity.class);
                 startActivity(intent);
             }
         });
+        findViewById(R.id.multi_player_btn).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), MultiplayerActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        dotAnimation(kuglica);
+
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-
-        /*if (mGoogleApiClient.isConnected()){
-            findViewById(R.id.sign_in_button).setVisibility(View.GONE);
-            findViewById(R.id.sign_out_button).setVisibility(View.VISIBLE);
-            findViewById(R.id.second_act).setVisibility(View.VISIBLE);
-        } else {
-            mGoogleApiClient.connect();
-            findViewById(R.id.second_act).setVisibility(View.GONE);
-        }*/
     }
 
     @Override
@@ -102,8 +116,10 @@ public class LoginActivity extends Activity
     public void onConnected(Bundle bundle) {
         Log.d(TAG, "connected");
         findViewById(R.id.sign_in_button).setVisibility(View.GONE);
-        findViewById(R.id.sign_out_button).setVisibility(View.VISIBLE);
-        findViewById(R.id.second_act).setVisibility(View.VISIBLE);
+        findViewById(R.id.single_player_btn).setVisibility(View.VISIBLE);
+        findViewById(R.id.multi_player_btn).setVisibility(View.VISIBLE);
+        //findViewById(R.id.sign_out_button).setVisibility(View.VISIBLE);
+
         progress.dismiss();
     }
 
@@ -168,6 +184,37 @@ public class LoginActivity extends Activity
 
     }
 
+    public void dotAnimation(final View dot){
+        final List<Integer> boje = GameLogic.returnColors();
+        final Random rnd = new Random();
+        final GradientDrawable gd = (GradientDrawable) dot.getBackground();
+        gd.setColor(getResources().getColor(boje.get(rnd.nextInt(7))));
 
+        ValueAnimator animator = ValueAnimator.ofFloat(0, (float) Math.PI);
+        animator.setDuration(1500);
+        animator.setRepeatCount(ValueAnimator.INFINITE);
+        final float width = dot.getLayoutParams().width;
+
+        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                float value = (float) animation.getAnimatedValue();
+                if ((value<((Math.PI/2)-0.2)) || (value>((Math.PI/2)+0.2))) check = true;
+                if (check){
+                    if ((value>((Math.PI/2)-0.2)) && (value<((Math.PI/2)+0.2))) {
+                        GradientDrawable gd = (GradientDrawable) dot.getBackground();
+                        gd.setColor(getResources().getColor(boje.get(rnd.nextInt(7))));
+                        check = false;
+                    }
+                }
+                ViewGroup.LayoutParams params = dot.getLayoutParams();
+                params.width = (int) (width - (float)(Math.abs(Math.sin(value)) * width * .8f));
+                params.height = params.width;
+                dot.setLayoutParams(params);
+                dot.invalidate();
+            }
+        });
+        animator.start();
+    }
 
 }

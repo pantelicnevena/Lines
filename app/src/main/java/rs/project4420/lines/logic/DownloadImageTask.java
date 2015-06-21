@@ -3,6 +3,7 @@ package rs.project4420.lines.logic;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PorterDuff;
@@ -13,6 +14,8 @@ import android.util.Log;
 import android.widget.ImageView;
 
 import java.io.InputStream;
+
+import rs.project4420.lines.R;
 
 /**
  * Created by nevena on 2.6.15..

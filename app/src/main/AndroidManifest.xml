@@ -37,7 +37,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".view.SecondActivity"
+            android:name=".view.MultiplayerActivity"
             android:label="@string/title_activity_second"
             android:screenOrientation="portrait">
         </activity>
