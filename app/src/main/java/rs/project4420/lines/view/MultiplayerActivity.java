@@ -114,7 +114,8 @@ public class MultiplayerActivity extends Activity
     @Override
     protected void onStop() {
         super.onStop();
-        mGoogleApiClient.disconnect();
+        if (mGoogleApiClient.isConnected())
+            mGoogleApiClient.disconnect();
     }
 
     @Override

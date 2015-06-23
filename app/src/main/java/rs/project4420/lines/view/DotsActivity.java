@@ -155,8 +155,8 @@ public class DotsActivity extends ActionBarActivity implements AdapterView.OnIte
                                 GameLogic.ubaciNoviDot(matrix, next2, adapter, scoreBar, tv);
                                 if (((List<Polje>)GameLogic.vratiListuPraznihPolja(matrix)).size() == 0)
                                     new AlertDialog.Builder(context)
-                                            .setTitle("Kraj igre")
-                                            .setMessage("Igra je završena.\nVaš rezultat je: "+tv.getText().toString()).show();
+                                            .setTitle("Game Over")
+                                            .setMessage("Game is over.\nYour score is: "+tv.getText().toString()).show();
                                 next = GameLogic.returnNextColor(matrix);
                                 next2 = GameLogic.returnNextColor(matrix);
                                 GradientDrawable gd = (GradientDrawable) nextView.getBackground();

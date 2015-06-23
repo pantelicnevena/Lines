@@ -81,7 +81,7 @@ public class GameLogic {
                 matrix[i][j] = new DotItem(R.color.grey);
             }
         }
-        for (int i = 0; i < 49; i++) {
+        for (int i = 0; i < 15; i++) {
             matrix[rnd.nextInt(7)][rnd.nextInt(7)].setColor(colors.get(rnd.nextInt(7)));
         }
         //TODO ne sme da dodje do ponavljanja pozicija na koja se ubacuju obojena polja

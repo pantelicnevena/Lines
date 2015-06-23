@@ -280,8 +280,18 @@ public class ThirdActivity extends Activity
     public void onInvitationRemoved(String s) {
     }
 
+    boolean invite = false;
+
     @Override
     public void onTurnBasedMatchReceived(TurnBasedMatch turnBasedMatch) {
+        //Resava pristizanje invite-a od strane drugog igraca
+        // jer tada prvi igrac pretpostavlja da je njegov red
+        if (!invite){
+            if (gameData.turnCounter == 1)
+                invite = true;
+            return;
+        }
+
         if (turnBasedMatch == null) { return; }
         mMatch = turnBasedMatch;
         GameLogic.loadIcons(dit, mMatch, mGoogleApiClient, playerIcon1, playerIcon2);
