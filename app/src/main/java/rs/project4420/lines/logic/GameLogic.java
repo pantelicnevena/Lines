@@ -269,7 +269,7 @@ public class GameLogic {
 
                 adapter.notifyDataSetChanged();
             }
-        }, 300);
+        }, 200);
 
 
         return matrix;

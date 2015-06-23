@@ -282,9 +282,10 @@ public class ThirdActivity extends Activity
         //Resava pristizanje invite-a od strane drugog igraca
         // jer tada prvi igrac pretpostavlja da je njegov red
         if (!invite){
-            if (gameData.turnCounter == 1)
+            if (gameData.turnCounter == 1) {
                 invite = true;
-            return;
+                return;
+            }
         }
 
         if (turnBasedMatch == null) { return; }
@@ -497,7 +498,7 @@ public class ThirdActivity extends Activity
                                 scoreBar.setBackgroundResource(R.drawable.score_bar); scoreBar.invalidate();
                                 scoreBar2.setBackgroundResource(R.drawable.score_bar_red); scoreBar2.invalidate();
                             }
-                        }, 420);
+                        }, 600);
 
                     }else { //ako ne moze da stigne do cilja
                         lastSelected = -1;
