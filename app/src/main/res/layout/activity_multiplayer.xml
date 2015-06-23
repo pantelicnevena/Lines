@@ -12,13 +12,19 @@
         android:id="@+id/get_room_btn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:textSize="16dp"
+        android:background="@drawable/button_background"
+        android:textColor="@color/light_blue"
         android:text="Play With Friend"/>
 
     <Button
         android:id="@+id/matches_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="15dp"
+        android:layout_marginTop="25dp"
+        android:textSize="16dp"
+        android:background="@drawable/button_background"
+        android:textColor="@color/light_blue"
         android:text="View Matches"/>
 
 </LinearLayout>

@@ -37,6 +37,7 @@ public class LoginActivity extends Activity
     ProgressDialog progress;
     View kuglica;
     boolean check;
+    int i = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -188,27 +189,29 @@ public class LoginActivity extends Activity
         final List<Integer> boje = GameLogic.returnColors();
         final Random rnd = new Random();
         final GradientDrawable gd = (GradientDrawable) dot.getBackground();
-        gd.setColor(getResources().getColor(boje.get(rnd.nextInt(7))));
+        gd.setColor(getResources().getColor(boje.get(0)));
 
         ValueAnimator animator = ValueAnimator.ofFloat(0, (float) Math.PI);
-        animator.setDuration(1500);
+        animator.setDuration(1100);
         animator.setRepeatCount(ValueAnimator.INFINITE);
         final float width = dot.getLayoutParams().width;
 
         animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
+                if (i <=5) { i++; } else { i = 0; }
                 float value = (float) animation.getAnimatedValue();
-                if ((value<((Math.PI/2)-0.2)) || (value>((Math.PI/2)+0.2))) check = true;
+                if ((value<((Math.PI/2)-0.5)) || (value>((Math.PI/2)+0.5))) check = true;
                 if (check){
-                    if ((value>((Math.PI/2)-0.2)) && (value<((Math.PI/2)+0.2))) {
+                    if ((value>((Math.PI/2)-0.5)) && (value<((Math.PI/2)+0.5))) {
                         GradientDrawable gd = (GradientDrawable) dot.getBackground();
-                        gd.setColor(getResources().getColor(boje.get(rnd.nextInt(7))));
+                        int boja = boje.get(i);
+                        gd.setColor(getResources().getColor(boja));
                         check = false;
                     }
                 }
                 ViewGroup.LayoutParams params = dot.getLayoutParams();
-                params.width = (int) (width - (float)(Math.abs(Math.sin(value)) * width * .8f));
+                params.width = (int) (width - (float)(Math.abs(Math.sin(value)) * width * .5f));
                 params.height = params.width;
                 dot.setLayoutParams(params);
                 dot.invalidate();

@@ -2,13 +2,17 @@ package rs.project4420.lines.logic;
 
 import android.animation.Animator;
 import android.animation.ValueAnimator;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.drawable.GradientDrawable;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Vibrator;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.GridView;
 import android.widget.ImageView;
@@ -37,6 +41,7 @@ import rs.project4420.lines.classes.MatrixItem;
 import rs.project4420.lines.classes.Polje;
 import rs.project4420.lines.R;
 import rs.project4420.lines.data.GameData;
+import rs.project4420.lines.view.MultiplayerActivity;
 
 /**
  * Created by nevena on 8.6.15..
@@ -76,7 +81,7 @@ public class GameLogic {
                 matrix[i][j] = new DotItem(R.color.grey);
             }
         }
-        for (int i = 0; i < 15; i++) {
+        for (int i = 0; i < 49; i++) {
             matrix[rnd.nextInt(7)][rnd.nextInt(7)].setColor(colors.get(rnd.nextInt(7)));
         }
         //TODO ne sme da dodje do ponavljanja pozicija na koja se ubacuju obojena polja
@@ -367,10 +372,6 @@ public class GameLogic {
             gameData.score1 = Integer.valueOf(score2.getText().toString());
         }
 
-
-    }
-
-    public static void setBorder(){
 
     }
 

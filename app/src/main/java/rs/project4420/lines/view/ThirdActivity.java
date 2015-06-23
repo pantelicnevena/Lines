@@ -2,7 +2,10 @@ package rs.project4420.lines.view;
 
 import android.animation.ValueAnimator;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -14,6 +17,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Vibrator;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,6 +31,7 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
+import com.google.android.gms.games.Game;
 import com.google.android.gms.games.Games;
 import com.google.android.gms.games.multiplayer.Invitation;
 import com.google.android.gms.games.multiplayer.OnInvitationReceivedListener;
@@ -91,11 +96,13 @@ public class ThirdActivity extends Activity
     private View scoreBar;
     private View scoreBar2;
     Vibrator vibe;
+    Context context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_third);
+        context = this;
 
         playerIcon1 = (ImageView) findViewById(R.id.player_image);
         playerIcon2 = (ImageView) findViewById(R.id.player_image_second);
@@ -122,6 +129,9 @@ public class ThirdActivity extends Activity
         nextView.setBackgroundResource(R.drawable.next_dot_player1);
         GradientDrawable gd = (GradientDrawable) nextView.getBackground();
         gd.setColor(getResources().getColor(next.getDot().getColor()));
+
+        scoreBar.setBackgroundResource(R.drawable.score_bar_red);
+        scoreBar.invalidate();
 
         if (mMatch != null){
             gameData =  new GameData();
@@ -225,6 +235,9 @@ public class ThirdActivity extends Activity
         gameData = new GameData();
         mMatch = match;
 
+        scoreBar.setBackgroundResource(R.drawable.score_bar_red);
+        scoreBar.invalidate();
+
         String playerId = Games.Players.getCurrentPlayerId(mGoogleApiClient);
         String myParticipantId = mMatch.getParticipantId(playerId);
 
@@ -276,6 +289,9 @@ public class ThirdActivity extends Activity
         params.width = scoreBar2.getLayoutParams().width + 5;
         scoreBar2.setLayoutParams(params);
 
+        scoreBar.setBackgroundResource(R.drawable.score_bar_red); scoreBar.invalidate();
+        scoreBar2.setBackgroundResource(R.drawable.score_bar); scoreBar2.invalidate();
+
         byte[] data = turnBasedMatch.getData();
         if (gameData.turnCounter == 0) {
             Toast.makeText(this, "Prihvacen je invite", Toast.LENGTH_SHORT).show();
@@ -295,6 +311,45 @@ public class ThirdActivity extends Activity
         gridView.setHorizontalSpacing(10);
         gridView.setVerticalSpacing(10);
         gridView.invalidate();
+
+        if (((List<Polje>)GameLogic.vratiListuPraznihPolja(matrix)).size() == 0) {
+            int higher = 0;
+            String name = "";
+            String message = "";
+            if (Integer.valueOf(score.getText().toString()) > Integer.valueOf(score2.getText().toString())){
+                higher = Integer.valueOf(score.getText().toString());
+                name = Games.Players.getCurrentPlayer(mGoogleApiClient).getDisplayName();
+                message = "The game is over.\n Winner is: "+name+" with "+higher+" points";
+            }
+            else if (Integer.valueOf(score.getText().toString()) > Integer.valueOf(score2.getText().toString())){
+                higher = Integer.valueOf(score2.getText().toString());
+                if ( mMatch.getParticipantId(Games.Players.getCurrentPlayerId(mGoogleApiClient)).equals("p_1"))
+                    name = mMatch.getParticipants().get(1).getDisplayName();
+                else name = mMatch.getParticipants().get(0).getDisplayName();
+                message = "The game is over.\n Winner is: "+name+" with "+higher+" points";
+            }
+            else if (Integer.valueOf(score.getText().toString()) == Integer.valueOf(score2.getText().toString())){
+                message = "The game is over.\n It is tied. Both players have " + Integer.valueOf(score.getText().toString()) + " points.";
+            }
+            new AlertDialog.Builder(context)
+                    .setTitle("Game Over")
+                    .setMessage(message)
+                    .setPositiveButton("Finish Game", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            Games.TurnBasedMultiplayer.finishMatch(mGoogleApiClient, mMatch.getMatchId());
+                            Intent intent = new Intent(getApplicationContext(), MultiplayerActivity.class);
+                            startActivity(intent);
+                        }
+                    })
+                    .show();
+        }
+        else {
+            Toast toast = Toast.makeText(this, "It's your turn", Toast.LENGTH_SHORT);
+            toast.setGravity(Gravity.CENTER, 0, 0);
+            toast.show();
+            vibe.vibrate(20);
+        }
 
         isDoingTurn = true;
         showTurnUI(turnBasedMatch);
@@ -375,6 +430,39 @@ public class ThirdActivity extends Activity
                             @Override
                             public void run() {
                                 matrix = GameLogic.ubaciNoviDot(matrix, next, adapter, scoreBar, score);
+                                if (((List<Polje>)GameLogic.vratiListuPraznihPolja(matrix)).size() == 0) {
+                                    int higher = 0;
+                                    String name = "";
+                                    String message = "";
+                                    if (Integer.valueOf(score.getText().toString()) > Integer.valueOf(score2.getText().toString())){
+                                        higher = Integer.valueOf(score.getText().toString());
+                                        name = Games.Players.getCurrentPlayer(mGoogleApiClient).getDisplayName();
+                                        message = "The game is over.\n Winner is: "+name+" with "+higher+" points";
+                                    }
+                                    else if (Integer.valueOf(score.getText().toString()) > Integer.valueOf(score2.getText().toString())){
+                                        higher = Integer.valueOf(score2.getText().toString());
+                                        if ( mMatch.getParticipantId(Games.Players.getCurrentPlayerId(mGoogleApiClient)).equals("p_1"))
+                                            name = mMatch.getParticipants().get(1).getDisplayName();
+                                        else name = mMatch.getParticipants().get(0).getDisplayName();
+                                        message = "The game is over.\n Winner is: "+name+" with "+higher+" points";
+                                    }
+                                    else if (Integer.valueOf(score.getText().toString()) == Integer.valueOf(score2.getText().toString())){
+                                        message = "The game is over.\n It is tied. Both players have " + Integer.valueOf(score.getText().toString()) + " points.";
+                                    }
+                                    new AlertDialog.Builder(context)
+                                            .setTitle("Game Over")
+                                            .setMessage(message)
+                                            .setPositiveButton("Finish Game", new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialog, int which) {
+                                                    Games.TurnBasedMultiplayer.finishMatch(mGoogleApiClient, mMatch.getMatchId());
+                                                    Intent intent = new Intent(getApplicationContext(), MultiplayerActivity.class);
+                                                    startActivity(intent);
+                                                }
+                                            })
+                                            .show();
+//                                    Games.TurnBasedMultiplayer.finishMatch(mGoogleApiClient, mMatch.getMatchId());
+                                }
                                 next = GameLogic.returnNextColor(matrix);
                                 nextView.setBackgroundResource(R.drawable.next_dot_player1);
                                 GradientDrawable gd = (GradientDrawable) nextView.getBackground();
@@ -401,6 +489,8 @@ public class ThirdActivity extends Activity
                                     }
                                 });
                                 gridView.setEnabled(false);
+                                scoreBar.setBackgroundResource(R.drawable.score_bar); scoreBar.invalidate();
+                                scoreBar2.setBackgroundResource(R.drawable.score_bar_red); scoreBar2.invalidate();
                             }
                         }, 420);
 

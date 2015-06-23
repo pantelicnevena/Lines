@@ -63,6 +63,9 @@
             android:id="@+id/single_player_btn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:textSize="16dp"
+            android:textColor="@color/light_blue"
+            android:background="@drawable/button_background"
             android:text="Single player"/>
 
         <Button
@@ -70,12 +73,18 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="15dp"
+            android:textSize="16dp"
+            android:background="@drawable/button_background"
+            android:textColor="@color/light_blue"
             android:text="Multiplayer"/>
 
         <Button
             android:id="@+id/sign_out_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:textSize="15dp"
+            android:textColor="@color/light_blue"
+            android:background="@drawable/button_background"
             android:text="Sign out"/>
 
         <!--<Button
