@@ -165,6 +165,8 @@ public class MultiplayerActivity extends Activity
 
     }
 
+
+    //TODO Never used getNextParticipantId
     /**
      * Get the next participant. In this function, we assume that we are
      * round-robin, with all known players going before all automatch players.

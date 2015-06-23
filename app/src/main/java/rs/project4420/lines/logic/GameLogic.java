@@ -1,33 +1,17 @@
 package rs.project4420.lines.logic;
 
-import android.animation.Animator;
 import android.animation.ValueAnimator;
-import android.app.AlertDialog;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.res.Resources;
-import android.graphics.drawable.GradientDrawable;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Vibrator;
-import android.util.Log;
-import android.view.Gravity;
 import android.view.View;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.games.Games;
 import com.google.android.gms.games.multiplayer.turnbased.TurnBasedMatch;
-import com.google.android.gms.games.multiplayer.turnbased.TurnBasedMultiplayer;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,7 +25,6 @@ import rs.project4420.lines.classes.MatrixItem;
 import rs.project4420.lines.classes.Polje;
 import rs.project4420.lines.R;
 import rs.project4420.lines.data.GameData;
-import rs.project4420.lines.view.MultiplayerActivity;
 
 /**
  * Created by nevena on 8.6.15..
