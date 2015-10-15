@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="rs.project4420.lines"
     android:versionCode="4"
-    android:versionName="1.0"
-    package="rs.project4420.lines" >
+    android:versionName="1.0" >
 
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.INTERNET" />
@@ -32,21 +32,24 @@
         <activity
             android:name=".view.LoginActivity"
             android:label="@string/title_activity_login"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
             android:name=".view.MultiplayerActivity"
             android:label="@string/title_activity_second"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait" >
         </activity>
         <activity
             android:name=".view.ThirdActivity"
             android:label="@string/title_activity_third"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity android:name=".Connect4" >
         </activity>
     </application>
 

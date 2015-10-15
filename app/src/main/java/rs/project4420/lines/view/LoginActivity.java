@@ -22,6 +22,7 @@ import com.google.example.games.basegameutils.BaseGameUtils;
 import java.util.List;
 import java.util.Random;
 
+import rs.project4420.lines.Connect4;
 import rs.project4420.lines.R;
 import rs.project4420.lines.logic.GameLogic;
 
@@ -43,6 +44,15 @@ public class LoginActivity extends Activity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        findViewById(R.id.btn_connect4).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(getApplicationContext(), Connect4.class);
+                startActivity(i);
+            }
+        });
+
         progress = new ProgressDialog(this);
         kuglica = (View) findViewById(R.id.login_dot);
         check = true;

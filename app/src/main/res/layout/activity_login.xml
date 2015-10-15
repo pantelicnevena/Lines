@@ -54,6 +54,12 @@
         android:orientation="vertical"
         android:layout_weight=".40">
 
+        <Button
+            android:id="@+id/btn_connect4"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Conntect4"/>
+
         <com.google.android.gms.common.SignInButton
             android:id="@+id/sign_in_button"
             android:layout_width="match_parent"

@@ -27,4 +27,6 @@
         android:textColor="@color/light_blue"
         android:text="View Matches"/>
 
+
+
 </LinearLayout>

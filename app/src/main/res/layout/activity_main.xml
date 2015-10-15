@@ -7,6 +7,8 @@
     android:orientation="vertical"
     tools:context="rs.project4420.lines.MainActivity">
 
+
+
     <!-- sign-in button -->
     <com.google.android.gms.common.SignInButton
         android:id="@+id/sign_in_button"
