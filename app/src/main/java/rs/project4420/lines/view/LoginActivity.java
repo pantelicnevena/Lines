@@ -22,7 +22,8 @@ import com.google.example.games.basegameutils.BaseGameUtils;
 import java.util.List;
 import java.util.Random;
 
-import rs.project4420.lines.Connect4;
+import rs.project4420.lines.connect4.ChoosePlayerActivity;
+import rs.project4420.lines.connect4.Connect4Activity;
 import rs.project4420.lines.R;
 import rs.project4420.lines.logic.GameLogic;
 
@@ -48,7 +49,7 @@ public class LoginActivity extends Activity
         findViewById(R.id.btn_connect4).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent i = new Intent(getApplicationContext(), Connect4.class);
+                Intent i = new Intent(getApplicationContext(), ChoosePlayerActivity.class);
                 startActivity(i);
             }
         });

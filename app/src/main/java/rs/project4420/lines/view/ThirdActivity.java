@@ -387,7 +387,7 @@ public class ThirdActivity extends Activity
     public void onResult(TurnBasedMultiplayer.InitiateMatchResult result) {
         Status status = result.getStatus();
         if(!status.isSuccess()){
-            Log.d(TAG, "status error: (" + status.getStatusCode() + ")" + status.getStatusMessage());
+            Log.d(TAG, "gameStatus error: (" + status.getStatusCode() + ")" + status.getStatusMessage());
         }
         TurnBasedMatch match = result.getMatch();
         if (match.getData() == null) {

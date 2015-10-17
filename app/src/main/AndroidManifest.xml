@@ -49,7 +49,9 @@
             android:label="@string/title_activity_third"
             android:screenOrientation="portrait" >
         </activity>
-        <activity android:name=".Connect4" >
+        <activity android:name=".connect4.Connect4Activity" >
+        </activity>
+        <activity android:name=".connect4.ChoosePlayerActivity" >
         </activity>
     </application>
 
