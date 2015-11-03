@@ -9,9 +9,6 @@ import android.widget.BaseAdapter;
 import rs.project4420.lines.R;
 import rs.project4420.lines.classes.DotView;
 
-/**
- * Created by enco on 15.10.15..
- */
 public class Connect4Adapter extends BaseAdapter{
 
     private static final String TAG = "Adapter";

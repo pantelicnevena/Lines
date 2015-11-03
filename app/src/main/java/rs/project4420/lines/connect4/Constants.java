@@ -2,9 +2,6 @@ package rs.project4420.lines.connect4;
 
 import rs.project4420.lines.R;
 
-/**
- * Created by enco on 16.10.15..
- */
 public class Constants {
 
     public static final int COIN_COLOR_GRID = R.color.grey;

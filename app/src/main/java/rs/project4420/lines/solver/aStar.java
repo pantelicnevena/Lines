@@ -1,5 +1,7 @@
 package rs.project4420.lines.solver;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -72,8 +74,11 @@ public class aStar {
             }
             for (int j = 0; j < otvorenaLista.size(); j++) {
                 if (otvorenaLista.get(j).getxTrenutno() == next.getxTrenutno()-1 &&
-                        otvorenaLista.get(j).getyTrenutno() == next.getyTrenutno())
+                        otvorenaLista.get(j).getyTrenutno() == next.getyTrenutno()) {
                     proveraUp = false;
+                    if (otvorenaLista.get(j).getKoraci() > next.getKoraci())
+                        Log.d(TAG, "otvorena lista get koraci");
+                }
             }
             if (proveraUp) up = vratiGore(kopija, next.getxTrenutno(), next.getyTrenutno(), xCilj, yCilj);
             if (up.getKoraci() != -1) otvorenaLista.add(up);

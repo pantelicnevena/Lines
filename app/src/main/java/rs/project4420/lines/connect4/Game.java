@@ -6,9 +6,6 @@ import android.util.Log;
 import java.util.HashSet;
 import java.util.Set;
 
-/**
- * Created by enco on 16.10.15..
- */
 public class Game {
     private static final String TAG = Game.class.getSimpleName();
 
@@ -75,7 +72,7 @@ public class Game {
         Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             public void run() {
-                int ret = ai.next(data);
+                int ret = ai.next(data, self.turn * (-1));
                 for (int i = 5; i >= 0; i--) {
                     if (data[i][ret].getCoinOwner() == Constants.COIN_OWNER_GRID) {
                         data[i][ret].setCoinOwner(turn);

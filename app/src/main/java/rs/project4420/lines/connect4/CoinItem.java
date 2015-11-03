@@ -1,8 +1,5 @@
 package rs.project4420.lines.connect4;
 
-/**
- * Created by enco on 15.10.15..
- */
 public class CoinItem {
 
 

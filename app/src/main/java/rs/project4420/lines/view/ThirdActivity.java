@@ -142,6 +142,8 @@ public class ThirdActivity extends Activity
             gridView.invalidate();
         }
 
+        gridView.setEnabled(false);
+        if (mGoogleApiClient.isConnected()) gridView.setEnabled(true);
         invitees = getIntent().getStringArrayListExtra("invitees");
     }
 
@@ -170,6 +172,7 @@ public class ThirdActivity extends Activity
         Log.d(TAG, "connected");
 
         GameLogic.loadIcons(dit, mMatch, mGoogleApiClient, playerIcon1, playerIcon2);
+        gridView.setEnabled(true);
 
         if (invitees == null) {
             Games.Invitations.registerInvitationListener(mGoogleApiClient, this);
