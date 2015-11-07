@@ -29,6 +29,8 @@ public class Game {
                 data[i][j] = new CoinItem();
             }
         }
+        /*data[5][4].setCoinOwner(1);
+        data[4][4].setCoinOwner(-1);*/
         ai = new Connect4AI();
     }
 

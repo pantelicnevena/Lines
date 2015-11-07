@@ -27,12 +27,12 @@ public class Evaluation {
             if (countOnOpenOneSide(data, 4, -turn) > 0) return (int)Double.NEGATIVE_INFINITY;
             //racunar
             sum += 10*countOnOpenOneSide(data, 2, turn);
-            sum += 50*countOnOpenOneSide(data, 3, turn);
+            sum += 100*countOnOpenOneSide(data, 3, turn);
             sum += 40*countOnOpenTwoSides(data, 2, turn);
             sum += 1000*countOnOpenTwoSides(data, 3, turn);
             //protivnik
             sum += -10*countOnOpenOneSide(data, 2, -turn);
-            sum += -50*countOnOpenOneSide(data, 3, -turn);
+            sum += -100*countOnOpenOneSide(data, 3, -turn);
             sum += -40*countOnOpenTwoSides(data, 2, -turn);
             sum += -1000*countOnOpenTwoSides(data, 3, -turn);
 
@@ -72,7 +72,7 @@ public class Evaluation {
         //for each kolonu
         for (int j = 0; j < 7; j++) {
             int max = 1;
-            for (int i = 0; i < 6; i++) {
+            for (int i = 5; i >= 0; i--) {
                 if (data[i][j].getCoinOwner() != 0 && i<5 &&
                         data[i+1][j].getCoinOwner() == data[i][j].getCoinOwner() &&
                         data[i][j].getCoinOwner() == turn){

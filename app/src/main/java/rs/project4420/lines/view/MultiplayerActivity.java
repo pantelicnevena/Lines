@@ -75,6 +75,7 @@ public class MultiplayerActivity extends Activity
         super.onActivityResult(requestCode, resultCode, data);
         if(requestCode == RQ_ROOM){
             if(resultCode == Activity.RESULT_OK){
+                //Lista pozvanih prijatelja
                 final ArrayList<String> invitees = data.getStringArrayListExtra(Games.EXTRA_PLAYER_IDS);
 
                 Intent intent = new Intent(this, ThirdActivity.class);
